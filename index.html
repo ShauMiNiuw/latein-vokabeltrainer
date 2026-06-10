@@ -1,0 +1,2981 @@
+<!DOCTYPE html>
+<html lang="de">
+ <head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Latein Vokabeltrainer
+  </title>
+<link rel="stylesheet" href="style.css">
+  <link class="favicon" href="icon.png" rel="icon" type="image/png"/>
+ </head>
+ <body>
+  <div class="container">
+   <div class="screen active card" id="setup-screen">
+    <button
+    class="icon-toggle-btn help-button"
+    onclick="openHelpRoom()"
+    title="Hilfe">
+    ❓
+</button>
+
+<button
+    id="advanced-mode-btn"
+    class="icon-toggle-btn advanced-mode-button"
+    title="Aktiviere erweiterten Modus"
+    onclick="toggleAdvancedMode()">
+    🔐
+</button>
+
+<div class="top-controls" id="main-menu-controls">
+    <button
+        class="icon-toggle-btn"
+        id="btn-mute"
+        onclick="openSoundMenu()"
+        title="Audio">
+        🔊
+    </button>
+
+    <button
+        class="icon-toggle-btn"
+        onclick="toggleTheme()"
+        title="Design wechseln">
+        🌓
+    </button>
+</div>
+    <h1>
+     🏛️ Latein Vokabeltrainer 🏛️
+    </h1>
+    <div class="menu-btn-row">
+     <button class="secondary-menu-btn" onclick="openAchievements()">
+      🏆 Trophäen-Zimmer
+     </button>
+     <button class="secondary-menu-btn" onclick="openVaultRoom()">
+      🎒 Problem-Tresor
+      <span class="vault-badge" id="vault-count-badge">
+       0
+      </span>
+     </button>
+    </div>
+<div id="sound-menu" style="display:none; margin-bottom:20px;">
+
+    <div class="audio-settings-grid">
+
+        <button class="main-btn" onclick="setAudioMode('all')">
+            🔊 Alles an
+        </button>
+
+        <button class="main-btn" onclick="setAudioMode('musicOff')">
+            🔔 Nur Effekte
+        </button>
+
+        <button class="main-btn" onclick="setAudioMode('effectsOff')">
+            🎵 Nur Musik
+        </button>
+
+        <button class="main-btn" onclick="setAudioMode('mute')">
+            🔇 Alles aus
+        </button>
+
+    </div>
+
+</div>    
+<hr style="border: 0; border-top: 1px solid var(--border-color); margin: 15px 0;"/>
+    <h3>
+     1. Lektionen wählen:
+    </h3>
+    <button onclick="toggleAllLessons()" style="margin-bottom: 8px; font-size: 12px; padding: 4px 8px; cursor: pointer;" type="button">
+     Alle an-/abwählen
+    </button>
+    <div class="grid" id="lessons-grid">
+    </div>
+    <h3>
+     2. Abfragemodus wählen:
+    </h3>
+    <div class="mode-selection">
+     <button class="option-btn selected" id="mode-1" onclick="selectMode(1)">
+      Lat ➔ DE
+     </button>
+     <button class="option-btn" id="mode-2" onclick="selectMode(2)">
+      DE ➔ Lat
+     </button>
+     <button class="option-btn" id="mode-3" onclick="selectMode(3)">
+      Zufall
+     </button>
+    </div>
+    <h3>
+     3. Trainings-Level wählen:
+    </h3>
+    <div class="level-selection">
+     <div class="level-card selected" id="lvl-1" onclick="selectLevel(1)">
+      <img alt="Lvl 1" src="Level 1.png"/>
+      <span>
+       Level 1
+      </span>
+     </div>
+     <div class="level-card" id="lvl-2" onclick="selectLevel(2)">
+      <img alt="Lvl 2" src="Level 2.png"/>
+      <span>
+       Level 2
+      </span>
+     </div>
+     <div class="level-card" id="lvl-3" onclick="selectLevel(3)">
+      <img alt="Lvl 3" src="Level 3.png"/>
+      <span>
+       Level 3
+      </span>
+     </div>
+     <div class="level-card" id="lvl-4" onclick="selectLevel(4)">
+      <img alt="Lvl 4" src="Level 4.png"/>
+      <span>
+       Level 4
+      </span>
+     </div>
+     <div class="level-card" id="lvl-5" onclick="selectLevel(5)">
+      <img alt="Lvl 5" src="Level 5.png"/>
+      <span>
+       Level 5
+      </span>
+     </div>
+    </div>
+    <button class="main-btn" disabled="" id="btn-start" onclick="startQuiz()">
+     Trainer starten
+    </button>
+<div class="highscore-box" id="highscore-box" style="display: none;">
+    <div class="highscore-title">
+        🕒 Deine letzten 5 Runden (Verlauf):
+    </div>
+
+    <div class="highscore-scroll">
+
+        <table class="highscore-table">
+            <thead>
+                <tr>
+                    <th>Uhrzeit / Datum</th>
+                    <th>Lektionen</th>
+                    <th>Level</th>
+                    <th>Score</th>
+                    <th>Zeit</th>
+                    <th>Max Streak</th>
+                    <th>Note</th>
+                </tr>
+            </thead>
+
+            <tbody id="highscore-tbody">
+            </tbody>
+
+        </table>
+
+    </div>
+</div>
+    <button
+    id="terminal-btn"
+    class="secondary-menu-btn"
+    onclick="openTerminal()"
+    style="display:none; margin-top:25px; width:100%; border:1px dashed #00ff33; color:#00ff33; background:#000;">
+     Öffne Kommandozeile
+    </button>   
+</div>
+   <div class="screen card terminal-screen" id="terminal-screen">
+    <h1>
+     SYSTEM_TERMINAL
+    </h1>
+    <p style="font-size:12px; margin-top:-10px; opacity:0.8;">
+     Tippe einen gültigen Befehl ein oder kehre zurück.
+    </p>
+    <div class="terminal-log" id="terminal-log-output">
+     <div>
+      Latein OS [Version 2026.06]
+     </div>
+     <div>
+      (c) System-Kommandozeile. Alle Rechte vorbehalten.
+     </div>
+     <div>
+      Gib einen Befehl ein, um das System zu steuern...
+     </div>
+     <div>
+      --------------------------------------------------
+     </div>
+    </div>
+    <div class="terminal-input-row">
+     <span class="terminal-prefix">
+      root@latin_trainer:~#
+     </span>
+     <input autocomplete="off" class="terminal-input-field" id="terminal-input-field" placeholder="" type="text"/>
+    </div>
+    <div style="margin-top: 20px; display: flex; gap:10px;">
+     <button class="secondary-menu-btn" onclick="closeTerminal()" style="background:#111; color:#00ff33; border: 1px solid #00ff33;">
+      Terminal schließen
+     </button>
+    </div>
+   </div>
+   <div class="screen card" id="vault-room-screen">
+    <div class="top-controls">
+     <button class="icon-toggle-btn" id="btn-download-vault" onclick="downloadVaultFile()" style="background-color: var(--success); color: white; border-color: var(--success);" title="Gesamten Tresor als .txt herunterladen">
+      💾
+     </button>
+    </div>
+    <h1>
+     🎒 Der Problem-Tresor
+    </h1>
+    <p style="font-size: 13px; color: #6c757d; margin-top:-10px;">
+     Hier landen alle Vokabeln, bei denen du Fehler machst oder Hilfe brauchst.
+    </p>
+    <div class="vault-list-container" id="vault-words-list-render">
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+     <button class="main-btn" id="btn-start-vault-quiz" onclick="startVaultQuiz()">
+      ⚡ Gesamten Tresor üben
+     </button>
+     <button class="secondary-menu-btn" onclick="closeVaultRoom()">
+      Zurück zum Hauptmenü
+     </button>
+    </div>
+   </div>
+   <div class="screen card" id="achievements-screen">
+    <h1>
+     🏆 Das Trophäen-Zimmer
+    </h1>
+    <p style="font-size: 13px; color: #6c757d; margin-top:-10px;">
+     Freigeschaltete Trophäen strahlen in
+     <span style="color:#b38728; font-weight:bold;">
+      Gold
+     </span>
+     , noch unentdeckte sind
+     <span style="color:#6c757d; font-weight:bold;">
+      Grau
+     </span>
+     .
+    </p>
+    <div class="achievements-grid" id="achievements-render-grid">
+    </div>
+    <div style="margin-top: 25px;">
+     <button class="main-btn" onclick="closeAchievements()">
+      Zurück zum Hauptmenü
+     </button>
+    </div>
+   </div>
+   <div class="screen card" id="help-screen">
+<div class="top-controls">
+
+    <button
+        class="icon-toggle-btn"
+        id="btn-case-correction"
+        onclick="toggleCaseCorrection()"
+        title="Aktiviere strenge Groß- und Kleinschreibung">
+        🔡
+    </button>
+
+</div>
+    <h1>
+     ❓ Hilfe &amp; Erklärung
+    </h1>
+    <div style="text-align:left; max-height:500px; overflow-y:auto;">
+     <h2>
+      Willkommen im Latein Vokabeltrainer!
+     </h2>
+     <p>
+      Hier bekommst du alles rund um die Benutzung des Vokabeltrainers erklärt. Bei Fragen wende dich an den Urheber.
+     </p>
+     <h3>
+      📚 Lektionen
+     </h3>
+     <p>
+      Wähle die Lektionen aus, die du trainieren möchtest. Du kannst auch mehrere Lektionen auswählen.
+     </p>
+     <p>
+      <b>
+       Info:
+      </b>
+      Dieser Vokabeltrainer basiert auf den Vokabeln vom Pontes Gesamtband und beinhaltet die Lektionen: Salve - L. 34
+     </p>
+     <h3>
+      🔄 Abfragemodus
+     </h3>
+     <p>
+      <b>
+       Lat ➜ DE
+      </b>
+      = Latein nach Deutsch
+     </p>
+     <p>
+      <b>
+       DE ➜ Lat
+      </b>
+      = Deutsch nach Latein
+     </p>
+     <p>
+      <b>
+       Zufall
+      </b>
+      = Beide Richtungen gemischt
+     </p>
+     <h3>
+      ⭐ Trainings-Level
+     </h3>
+     <p>
+      <b>
+       Level 1:
+      </b>
+      Nur Übersetzung, 30 % Tipps, 60 Sek./Frage
+     </p>
+     <p>
+      <b>
+       Level 2:
+      </b>
+      Nur Übersetzung, 10 % Tipps, 45 Sek./Frage
+     </p>
+     <p>
+      <b>
+       Level 3:
+      </b>
+      Übersetzung + Geschlecht, 15 % Tipps/Joker, 60 Sek./Frage
+     </p>
+     <p>
+      <b>
+       Level 4:
+      </b>
+      Übersetzung + Geschlecht, 8 % Tipps/Joker, 45 Sek./Frage
+     </p>
+     <p>
+      <b>
+       Level 5:
+      </b>
+      Übersetzung + Geschlecht + Grammatik, 5 % Tipps/Joker, 45 Sek./Frage
+     </p>
+     <h3>
+      💡 Tipps
+     </h3>
+     <p>
+      Fällt dir eine Vokabel im Quiz nicht ein, kannst du die begrenzten Tipps verwenden. Dabei bekommst du den Anfang des gesuchten Wortes und eine Eselsbrücke.
+     </p>
+     <h3>
+      🃏 Grammatik-Joker
+     </h3>
+     <p>
+      Füllt benötigte Grammatikangaben automatisch aus.
+     </p>
+     <h3>
+      🎒 Problem-Tresor
+     </h3>
+     <p>
+      Dort werden schwierige Vokabeln gesammelt, damit du sie gezielt wiederholen kannst.
+     </p>
+     <h3>
+      🏆 Trophäen-Zimmer
+     </h3>
+     <p>
+      Hier findest du alle freigeschalteten Erfolge. Ziel ist es, alle freizuschalten.
+     </p>
+     <h3>
+      ⏳ Zeitlimit
+     </h3>
+     <p>
+      Du hast eine Gesamtzeit für alle Fragen. Je nach Level bekommst du pro Frage 45 Sekunden oder 60 Sekunden.
+     </p>
+     <h3>
+      🔥 Streak
+     </h3>
+     <p>
+      Ab drei richtige Antworten hintereinander hast du einen Streak. Dieser wird in der Auswertung und im Verlauf angezeigt.
+     </p>
+     <h3>
+      🌓 Design
+     </h3>
+     <p>
+      Wechselt zwischen Hell- und Dunkelmodus.
+     </p>
+     <h3>
+      🔊 Audio
+     </h3>
+     <p>
+      Du kannst auswählen, ob Audio abgespielt werden soll. Dabei kannst du zwischen Hintergrundmusik und Soundeffekten unterscheiden.
+     </p>
+     <h3>
+      🔐 Erweiterter Modus
+     </h3>
+     <p>
+      Aktiviere den erweiterten Modus, um Befehle zu nutzen. Im Terminal einfach "/givecommands" eingeben.
+     </p>
+     <p>
+      <b>
+       !!! WICHTIG NUR NUTZEN, WENN MAN SICH DEN FOLGEN BEWUSST IST !!!
+      </b>
+     </p>
+     <h3>
+      ⚙️ Übersetzungsfeld
+     </h3>
+     <p>
+      Gebe
+      <b>
+       EINE
+      </b>
+      richtige Übersetzung ein.
+     </p>
+     <h3>
+      🖋️ Grammatikinformationen
+     </h3>
+     <p>
+      So trägst du die Vokabeln richtig ein:
+     </p>
+     <p>
+      <b>
+       Allgemein:
+      </b>
+      Trage nur den Inhalt der zweiten Spalte ein (bitte ohne das Geschlecht).
+     </p>
+     <p>
+      <b>
+       Verben:
+      </b>
+      Trage alle Formen wie im Buch ein, getrennt durch ein Komma (z. B. form1, form2, form3).
+     </p>
+     <p>
+      <b>
+       Substantive:
+      </b>
+      Trage die Form aus der zweiten Spalte ein. Falls dort der Genitiv Plural steht, schreibe ihn bitte genau so: Wort (Gen. Pl.: Wort).
+     </p>
+     <h3>
+      🙂 Geschlechtsfeld
+     </h3>
+     <p>
+      ♂️ = männlich
+     </p>
+     <p>
+      ♀️ = weiblich
+     </p>
+     <p>
+      ⚧️ = neutral
+     </p>
+     <p>
+      ❓ = Keine Ahnung
+     </p>
+     <h3>
+      💯 Verlauf
+     </h3>
+     <p>
+      Hier findest du deine letzten fünf Abfragen im Vergleich zueinander.
+     </p>
+     <h3>
+      🎉 Auswertung
+     </h3>
+     <p>
+      Hier findest du viele Informationen zu deiner letzten Abfrage:
+     </p>
+     <p>
+      - Punktzahl
+     </p>
+     <p>
+      - Prozentangabe
+     </p>
+     <p>
+      - Zeit
+     </p>
+     <p>
+      - Streak
+     </p>
+     <p>
+      - Abgefragte Lektionen
+     </p>
+     <p>
+      - Note
+     </p>
+     <p>
+      - Tipp
+     </p>
+     <p>
+      - Persönlicher Spickzettel mit allen falschen Vokabeln (auch zum Download)
+     </p>
+     <p>
+     ​🔡​ Groß- und Kleinschreibkorrektur
+     </p>
+     <p>
+     Aktiviere die Groß- und Kleinschreibkorrektur, um auch auf die Groß- und Kleinschreibung in den Abfragen bewertet zu werden.
+     </p>
+    </div>
+    <div style="margin-top:25px;">
+     <button class="main-btn" onclick="closeHelpRoom()">
+      Zurück zum Hauptmenü
+     </button>
+    </div>
+   </div>
+   <div class="screen card" id="quiz-screen">
+    <div class="exit-quiz-container">
+     <button class="exit-quiz-btn" onclick="exitQuizEarly()">
+      ✕ Quiz abbrechen
+     </button>
+    </div>
+    <div style="display: flex; justify-content: space-between; font-size: 14px; color: #6c757d;">
+     <span id="progress-text">
+      Frage 0 / 0
+     </span>
+     <span id="score-text">
+      Punkte: 0
+     </span>
+    </div>
+    <div style="background: #e9ecef; height: 6px; border-radius: 3px; margin-top: 8px; overflow: hidden; margin-bottom: 15px;">
+     <div id="progress-bar" style="background: var(--primary); width: 0%; height: 100%; transition: width 0.2s;">
+     </div>
+    </div>
+    <div>
+     <img alt="Level Icon" class="level-indicator-icon-img" id="level-indicator-icon" src="Level 1.png"/>
+    </div>
+    <div id="streak-badge">
+     🔥 Streak:
+     <span id="streak-count">
+      0
+     </span>
+    </div>
+    <p id="direction-hint" style="margin: 5px 0; font-weight: bold; color: var(--primary); font-size: 14px;">
+    </p>
+    <div id="lesson-badge">
+     Lektion --
+    </div>
+    <div id="question-word">
+     ---
+    </div>
+    <div class="input-group">
+     <input autocomplete="off" id="input-answer" oninput="validateFieldsFilled()" placeholder="Übersetzung eingeben..." type="text"/>
+     <div id="grammar-area" style="display: none; width: 100%;">
+      <div class="grammar-split-container" id="grammar-fields-wrapper">
+       <input autocomplete="off" class="flex-2-3" id="input-grammar-text" oninput="validateFieldsFilled()" placeholder="Grammatikinformationen eingeben..." type="text"/>
+       <div class="gender-checkbox-group" id="gender-checkbox-wrapper">
+        <label title="Maskulinum">
+         <input id="cb-gender-m" onchange="validateFieldsFilled()" type="checkbox" value="m"/>
+         ♂️
+        </label>
+        <label title="Femininum">
+         <input id="cb-gender-f" onchange="validateFieldsFilled()" type="checkbox" value="f"/>
+         ♀️
+        </label>
+        <label title="Neutrum">
+         <input id="cb-gender-n" onchange="validateFieldsFilled()" type="checkbox" value="n"/>
+         ⚧️​
+        </label>
+        <label title="Keine Ahnung">
+         <input id="cb-gender-q" onchange="validateFieldsFilled()" type="checkbox" value="?"/>
+         ❓
+        </label>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="action-buttons-row">
+     <button class="main-btn" disabled="" id="btn-check" onclick="checkAnswer()">
+      Prüfen
+     </button>
+     <button class="dont-know-btn" id="btn-dont-know" onclick="skipWithDontKnow()">
+      Weiß ich nicht
+     </button>
+    </div>
+    <div style="margin-top: 20px;">
+     <div id="timer-display-wrapper">
+      ⏳ Verbleibende Zeit:
+      <span id="timer-display">
+       00:00
+      </span>
+     </div>
+     <div id="hint-counter" style="font-size: 13px; color: #6c757d;">
+      Tipps: 0 | Joker: 0
+     </div>
+    </div>
+    <div class="sub-actions-container">
+     <button class="hint-btn" id="btn-hint" onclick="useHint()">
+      Eselsbrücke anzeigen
+     </button>
+     <button class="hint-btn" id="btn-joker" onclick="useJoker()" style="color: var(--success);">
+      Grammatik-Joker einsetzen
+     </button>
+    </div>
+    <div class="eselsbruecke-box" id="hint-display">
+    </div>
+    <div class="feedback" id="feedback-box">
+    </div>
+   </div>
+   <div class="screen card" id="result-screen">
+    <h1 id="result-headline-title">
+     Auswertung 🎉
+    </h1>
+    <div id="timeout-warning-notice" style="display:none; background:rgba(231,29,54,0.15); color:var(--danger); font-weight:bold; padding:12px; border-radius:8px; margin-bottom:15px; border-left:5px solid var(--danger);">
+     🛑 Deine Zeit ist abgelaufen! Das Quiz wurde automatisch ausgewertet.
+    </div>
+    <div>
+     <img alt="Endscreen Level Icon" class="level-indicator-icon-img" id="result-level-icon" src="Level 1.png"/>
+    </div>
+    <p id="final-stats">
+    </p>
+    <div class="toggle-lessons-trigger" onclick="toggleLessonsSummary()">
+     Abgefragte Lektionen anzeigen ▼
+    </div>
+    <div class="lessons-summary" id="final-lessons-list">
+    </div>
+    <div class="spickzettel-box" id="spickzettel-area">
+     <div class="spickzettel-title">
+      📝 Dein persönlicher Spickzettel
+     </div>
+     <p style="font-size:13px; margin:0; color: #6c757d;">
+      Du hast Fehler gemacht. Hier kannst du den Spickzettel herunterladen, um diese Vokabeln gezielt zu wiederholen:
+     </p>
+     <ul class="spickzettel-list" id="spickzettel-liste" style="margin-top:10px; max-height: 120px; overflow-y: auto;">
+     </ul>
+     <button class="download-btn" onclick="downloadSpickzettelFile()">
+      💾 Spickzettel (.txt) herunterladen
+     </button>
+    </div>
+    <h2 id="final-score" style="font-size: 44px; color: var(--primary); margin: 15px 0;">
+     0 / 0
+    </h2>
+    <div id="grade-display">
+     Note: --
+    </div>
+    <div class="recommendation-box" id="level-recommendation">
+    </div>
+    <div style="margin-top: 25px;">
+     <button class="main-btn" onclick="resetQuizApp()">
+      Neues Quiz
+     </button>
+    </div>
+   </div>
+  </div>
+  <script src="achievements.js">
+  </script>
+  <script src="./vokabeln.js">
+  </script>
+  <script>
+   let selectedMode = 1; 
+    let selectedLevel = 1;
+    let activeVocabList = [];
+    let checkedLessonsGlobal = [];
+    let currentIndex = 0;
+    let score = 0;
+    let maxPossibleScore = 0;
+    let currentDirection = "lat-ger"; 
+
+    let maxHintsAllowed = 0;
+    let hintsUsedCount = 0;
+    let maxJokersAllowed = 0;
+    let jokersUsedCount = 0;
+    
+    let currentStreak = 0;
+    let maxStreakInSession = 0;
+
+    let wrongVocabRegistry = []; 
+    let isMuted = false;
+    let currentGeneratedSpickzettelText = "";
+    let isVaultModeActive = false;
+    let wasTimeoutTriggered = false;
+
+    let timerInterval = null;
+    let secondsRemaining = 0;
+    let totalSecondsElapsed = 0;
+
+    let soundEffectsEnabled = true;
+    let musicEnabled = true;
+
+    let caseCorrectionEnabled = true;
+
+    let hintUsedThisQuestion = false;
+    let jokerUsedThisQuestion = false;
+
+    const levelHintPercentages = {
+    1: 0.30,
+    2: 0.10,
+    3: 0.15,
+    4: 0.08,
+    5: 0.05
+};
+
+const levelJokerPercentages = {
+    1: 0,
+    2: 0,
+    3: 0.15,
+    4: 0.08,
+    5: 0.05
+};
+
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+const bgMusic = new Audio("music.mp3");
+bgMusic.loop = true;
+bgMusic.volume = 0.15;
+
+function normalize(str, caseCorrectionEnabled) {
+    let result = str.trim();
+
+    // Leerzeichen immer vereinheitlichen (egal ob Feature an/aus)
+    result = result.replace(/\s+/g, " ");
+
+    // Groß-/Kleinschreibung nur wenn aktiviert
+    if (caseCorrectionEnabled) {
+        result = result.toLowerCase();
+    }
+
+    return result;
+}
+
+    function playSound(type) {
+    if (!soundEffectsEnabled) return;
+        try {
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); 
+                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.12); 
+                osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.24); 
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+            } else if (type === 'partial') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(440, audioCtx.currentTime); 
+                osc.frequency.setValueAtTime(554.37, audioCtx.currentTime + 0.15); 
+                gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+            } else if (type === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.3);
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.35);
+            }
+
+else if (type === 'click') {
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+    gainNode.gain.setValueAtTime(0.12, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.08);
+}
+
+else if (type === 'success') {
+    osc.type = 'triangle';
+
+    osc.frequency.setValueAtTime(523, audioCtx.currentTime);
+    osc.frequency.setValueAtTime(659, audioCtx.currentTime + 0.15);
+    osc.frequency.setValueAtTime(784, audioCtx.currentTime + 0.30);
+    osc.frequency.setValueAtTime(1046, audioCtx.currentTime + 0.45);
+
+    gainNode.gain.setValueAtTime(0.35, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.8);
+
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.8);
+}
+
+else if (type === 'fail') {
+    osc.type = 'sawtooth';
+
+    osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+    osc.frequency.setValueAtTime(220, audioCtx.currentTime + 0.2);
+    osc.frequency.setValueAtTime(150, audioCtx.currentTime + 0.4);
+
+    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.7);
+
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.7);
+}
+
+else if (type === 'achievement') {
+    osc.type = 'triangle';
+
+    osc.frequency.setValueAtTime(523, audioCtx.currentTime);
+    osc.frequency.setValueAtTime(659, audioCtx.currentTime + 0.1);
+    osc.frequency.setValueAtTime(784, audioCtx.currentTime + 0.2);
+    osc.frequency.setValueAtTime(1046, audioCtx.currentTime + 0.3);
+    osc.frequency.setValueAtTime(1318, audioCtx.currentTime + 0.4);
+
+    gainNode.gain.setValueAtTime(0.35, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1);
+
+    osc.start();
+    osc.stop(audioCtx.currentTime + 1);
+}
+
+} catch(e) {}
+}
+
+    window.onload = function() {
+
+    if (localStorage.getItem("theme") === "dark") {
+        document.documentElement.setAttribute("data-theme", "dark");
+    }
+
+    const lockBtn = document.getElementById("advanced-mode-btn");
+    const terminalBtn = document.getElementById("terminal-btn");
+
+    if (advancedModeEnabled) {
+        lockBtn.textContent = "🔓";
+        lockBtn.title = "Deaktiviere erweiterten Modus";
+        terminalBtn.style.display = "block";
+    } else {
+        lockBtn.textContent = "🔐";
+        lockBtn.title = "Aktiviere erweiterten Modus";
+        terminalBtn.style.display = "none";
+    }
+
+    const grid = document.getElementById("lessons-grid");
+    grid.innerHTML = "";
+
+    for (let i = 0; i <= 34; i++) {
+        const labelText = i === 0 ? "Salve" : `Lektion ${i}`;
+        grid.innerHTML += `
+            <label class="checkbox-label">
+                <input type="checkbox" value="${i}" onchange="playSound('click'); updateStartButton()">
+                ${labelText}
+            </label>
+        `;
+    }
+document.querySelectorAll("button").forEach(btn => {
+    btn.addEventListener("click", () => {
+        playSound("click");
+    });
+});
+        
+        document.getElementById("input-answer").addEventListener("keyup", function(e) { 
+            if (e.key === "Enter" && !document.getElementById("btn-check").disabled) checkAnswer(); 
+        });
+        document.getElementById("input-grammar-text").addEventListener("keyup", function(e) { 
+            if (e.key === "Enter" && !document.getElementById("btn-check").disabled) checkAnswer(); 
+        });
+
+        document.getElementById("terminal-input-field").addEventListener("keyup", function(e) {
+            if (e.key === "Enter") processTerminalCommand();
+        });
+
+        updateVaultBadge();
+        renderHighscores();
+    };
+
+            
+
+
+function toggleCaseCorrection() {
+
+    caseCorrectionEnabled = !caseCorrectionEnabled;
+
+    const btn = document.getElementById("btn-case-correction");
+
+    if (caseCorrectionEnabled) {
+        btn.innerText = "🔡";
+        btn.title = "Aktiviere strenge Groß- und Kleinschreibung";
+    } else {
+        btn.innerText = "🔠";
+        btn.title = "Deaktiviere strenge Groß- und Kleinschreibung";
+    }
+}
+
+
+
+
+
+
+
+
+
+
+    function toggleTheme() {
+        if (document.documentElement.getAttribute("data-theme") === "dark") {
+            document.documentElement.removeAttribute("data-theme");
+            localStorage.setItem("theme", "light");
+        } else {
+            document.documentElement.setAttribute("data-theme", "dark");
+            localStorage.setItem("theme", "dark");
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function toggleMute() {
+        isMuted = !isMuted;
+        document.getElementById("btn-mute").innerText = isMuted ? "🔇" : "🔊";
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function toggleAllLessons() {
+        const checkboxes = document.querySelectorAll("#lessons-grid input");
+        const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+        checkboxes.forEach(cb => cb.checked = !allChecked);
+        updateStartButton();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function updateStartButton() {
+        const anyChecked = Array.from(document.querySelectorAll("#lessons-grid input")).some(cb => cb.checked);
+        document.getElementById("btn-start").disabled = !anyChecked;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function selectMode(modeNum) {
+        selectedMode = modeNum;
+        document.querySelectorAll(".mode-selection .option-btn").forEach(btn => btn.classList.remove("selected"));
+        document.getElementById(`mode-${modeNum}`).classList.add("selected");
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function selectLevel(lvlNum) {
+
+    playSound("click");
+
+    selectedLevel = lvlNum;
+    document.querySelectorAll(".level-selection .level-card")
+        .forEach(card => card.classList.remove("selected"));
+
+    const targetCard = document.getElementById(`lvl-${lvlNum}`);
+    if (targetCard) targetCard.classList.add("selected");
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function extractGendersArray(grammarString) {
+    if (!grammarString) return [];
+
+    const results = [];
+
+    if (/\bm\./i.test(grammarString) || /\bmagnum\b/i.test(grammarString))
+        results.push("m");
+
+    if (/\bf\./i.test(grammarString) || /\bmagna\b/i.test(grammarString))
+        results.push("f");
+
+    if (/\bn\./i.test(grammarString) || /\bmagnum\b/i.test(grammarString))
+        results.push("n");
+
+    return results;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   function extractPureGrammarText(grammarString) {
+
+    if (!grammarString) return "";
+
+    let pure = grammarString
+        .replace(/\s*m\.\s*\/\s*f\.\s*\/\s*n\./gi, "")
+        .replace(/\s*m\.\s*\/\s*f\./gi, "")
+        .replace(/\s*m\.\s*\/\s*n\./gi, "")
+        .replace(/\s*f\.\s*\/\s*n\./gi, "")
+        .replace(/\b[mfn]\./gi, "")
+        .trim()
+        .toLowerCase();
+
+    if (pure === "interjektion") return "";
+    if (pure.includes("magna") && pure.includes("magnum")) return "";
+
+    return pure;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function calculateGrade(percentage) {
+        if (percentage >= 98) return "1+";
+        if (percentage >= 93) return "1";
+        if (percentage >= 90) return "1-";
+        if (percentage >= 85) return "2+";
+        if (percentage >= 80) return "2";
+        if (percentage >= 75) return "2-";
+        if (percentage >= 70) return "3+";
+        if (percentage >= 65) return "3";
+        if (percentage >= 60) return "3-";
+        if (percentage >= 55) return "4+";
+        if (percentage >= 50) return "4";
+        if (percentage >= 45) return "4-";
+        if (percentage >= 33) return "5+";
+        if (percentage >= 27) return "5";
+        if (percentage >= 20) return "5-";
+        return "6";
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function incrementLevelCounter(lvl) {
+        let counts = JSON.parse(localStorage.getItem("latin_lvl_counts") || "{}");
+        counts[lvl] = (counts[lvl] || 0) + 1;
+        localStorage.setItem("latin_lvl_counts", JSON.stringify(counts));
+        if(counts[1] >= 5) unlockAchievement("level_1_master");
+        if(counts[2] >= 5) unlockAchievement("level_2_master");
+        if(counts[3] >= 5) unlockAchievement("level_3_master");
+        if(counts[4] >= 5) unlockAchievement("level_4_master");
+        if(counts[5] >= 5) unlockAchievement("level_5_master");
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function getGradeBorderClass(grade) {
+        if (grade === "1" || grade === "1+") return "res-gold";
+        if (grade === "1-") return "res-green";
+        if (grade === "2+" || grade === "2") return "res-lightgreen";
+        if (grade === "2-" || grade === "3+" || grade === "3") return "res-yellow";
+        if (grade === "3-" || grade === "4+" || grade === "4" || grade === "4-") return "res-orange";
+        return "res-red"; 
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function formatTime(totalSeconds) {
+        const m = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+        const s = (totalSeconds % 60).toString().padStart(2, '0');
+        return `${m}:${s}`;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function toggleLessonsSummary() {
+        const summary = document.getElementById("final-lessons-list");
+        summary.style.display = (summary.style.display === "block") ? "none" : "block";
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function getSelectedGendersFromUI() {
+        const selected = [];
+        if (document.getElementById("cb-gender-m").checked) selected.push("m");
+        if (document.getElementById("cb-gender-f").checked) selected.push("f");
+        if (document.getElementById("cb-gender-n").checked) selected.push("n");
+        if (document.getElementById("cb-gender-q").checked) selected.push("?");
+        return selected;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function validateFieldsFilled() {
+
+
+        const currentItem = activeVocabList[currentIndex];
+        const expectedGenders = extractGendersArray(currentItem.grammar);
+        const isNoun = expectedGenders.length > 0;
+        const hasGrammarField =
+        currentItem.grammar &&
+        currentItem.grammar.toLowerCase().trim() !== "interjektion";
+
+
+        const btnCheck = document.getElementById("btn-check");
+        if (btnCheck.innerText === "Weiter") return;
+
+        const userAns = document.getElementById("input-answer").value.trim();
+        const userGramText = document.getElementById("input-grammar-text").value.trim();
+        const hasGenderSelection = getSelectedGendersFromUI().length > 0;
+
+        let isValid = false;
+
+        if (selectedLevel === 1 || selectedLevel === 2) {
+            isValid = (userAns !== "");}
+        else if (selectedLevel === 3 || selectedLevel === 4) {
+
+   
+
+    if (isNoun) {
+        isValid = (userAns !== "" && hasGenderSelection);
+    } else {
+        isValid = (userAns !== "");
+    }
+}
+         else if (selectedLevel === 5) {
+
+
+    if (isNoun) {
+        isValid =
+            userAns !== "" &&
+            hasGenderSelection &&
+            (!hasGrammarField || userGramText !== "");
+    }
+    else {
+        isValid =
+            userAns !== "" &&
+            (!hasGrammarField || userGramText !== "");
+    }
+}
+
+        btnCheck.disabled = !isValid;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function startTimer() {
+        if(timerInterval) clearInterval(timerInterval);
+        
+        updateTimerDisplay();
+        timerInterval = setInterval(() => {
+            secondsRemaining--;
+            totalSecondsElapsed++;
+            updateTimerDisplay();
+            
+            if(secondsRemaining <= 0) {
+                clearInterval(timerInterval);
+                wasTimeoutTriggered = true;
+                endQuiz();
+            }
+        }, 1000);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function updateTimerDisplay() {
+        document.getElementById("timer-display").innerText = formatTime(secondsRemaining);
+        if (secondsRemaining < 30) {
+            document.getElementById("timer-display-wrapper").style.color = "var(--danger)";
+        } else {
+            document.getElementById("timer-display-wrapper").style.color = "var(--text)";
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function exitQuizEarly() {
+        if(timerInterval) clearInterval(timerInterval);
+        resetQuizApp();
+    }
+
+    // VAULT (TRESOR) CORES
+    function getVaultVocab() {
+        return JSON.parse(localStorage.getItem("latin_vault_words")) || [];
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function saveVaultVocab(list) {
+        localStorage.setItem("latin_vault_words", JSON.stringify(list));
+        updateVaultBadge();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function updateVaultBadge() {
+        const count = getVaultVocab().length;
+        document.getElementById("vault-count-badge").innerText = count;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function addWordToVault(wordObj) {
+        let currentVault = getVaultVocab();
+        if(!currentVault.some(v => v.id === wordObj.id)) {
+            currentVault.push(wordObj);
+            saveVaultVocab(currentVault);
+        }
+    }
+
+    function removeWordFromVault(wordObj) {
+        let currentVault = getVaultVocab();
+        currentVault = currentVault.filter(v => v.id !== wordObj.id);
+        saveVaultVocab(currentVault);
+    }
+
+    // TRESOR RAUM MANAGEMENT
+    function openVaultRoom() {
+
+ hideAllPopups();
+
+        document.getElementById("setup-screen").classList.remove("active");
+        document.getElementById("vault-room-screen").classList.add("active");
+        document.getElementById("main-menu-controls").style.display = "none";
+        
+        renderVaultWordsList();
+        unlockAchievement("vault_visit");
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function closeVaultRoom() {
+        document.getElementById("vault-room-screen").classList.remove("active");
+        document.getElementById("setup-screen").classList.add("active");
+        document.getElementById("main-menu-controls").style.display = "flex";
+        updateVaultBadge();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function renderVaultWordsList() {
+        const vaultWords = getVaultVocab();
+        const container = document.getElementById("vault-words-list-render");
+        
+        if(vaultWords.length === 0) {
+            container.innerHTML = `<p style="text-align:center; opacity:0.6; padding: 20px 0;">Dein Tresor ist leer! Keine schweren Vokabeln registriert.</p>`;
+            document.getElementById("btn-start-vault-quiz").disabled = true;
+            document.getElementById("btn-download-vault").disabled = true;
+            return;
+        }
+
+        document.getElementById("btn-start-vault-quiz").disabled = false;
+        document.getElementById("btn-download-vault").disabled = false;
+
+        container.innerHTML = "";
+        vaultWords.forEach(v => {
+            container.innerHTML += `
+                <div class="vault-list-item">
+                    <div>
+                        <b style="color:var(--primary); font-size:14px;">${v.latin}</b> ➔ ${v.german} 
+                        <br><span style="font-size:11px; opacity:0.6;">Lektion ${v.lektion} | Typ: ${v.grammar}</span>
+                    </div>
+                    <button class="vault-item-remove-btn" onclick="deleteVaultWordDirectly(${v.id})" title="Aus dem Tresor löschen">✕</button>
+                </div>
+            `;
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function deleteVaultWordDirectly(id) {
+        let currentVault = getVaultVocab();
+        currentVault = currentVault.filter(v => v.id !== id);
+        saveVaultVocab(currentVault);
+        renderVaultWordsList();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function startVaultQuiz() {
+        const vaultWords = getVaultVocab();
+        if(vaultWords.length === 0) return;
+
+        isVaultModeActive = true;
+        activeVocabList = [...vaultWords].sort(() => Math.random() - 0.5);
+        checkedLessonsGlobal = [...new Set(activeVocabList.map(v => v.lektion))].sort((a,b)=>a-b);
+
+        document.getElementById("vault-room-screen").classList.remove("active");
+        initiateQuizCore();
+        unlockAchievement("vault_clean");
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function downloadVaultFile() {
+        const vaultWords = getVaultVocab();
+        if(vaultWords.length === 0) return;
+
+        let txtOutput = `=== LATEIN PROBLEM-VOKABELN TRESOR ===\nExportiert am: ${new Date().toLocaleString("de-DE")}\nAnzahl im Tresor: ${vaultWords.length} Vokabeln\n\n`;
+        vaultWords.forEach((v, index) => {
+            txtOutput += `${index + 1}) Herkunft: Lektion ${v.lektion}\n   Latein: ${v.latin}\n   Deutsch: ${v.german}\n   Grammatik: ${v.grammar}\n----------------------------------------\n`;
+        });
+
+        const blob = new Blob([txtOutput], { type: "text/plain;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "Latein_ProblemTresor_Komplett.txt";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        unlockAchievement("vault_downloaded");
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function startQuiz() {
+        isVaultModeActive = false;
+        const checkedBoxes = document.querySelectorAll("#lessons-grid input:checked");
+        checkedLessonsGlobal = Array.from(checkedBoxes).map(cb => parseInt(cb.value)).sort((a,b) => a-b);
+
+        activeVocabList = vocabData.filter(v => checkedLessonsGlobal.includes(v.lektion));
+        activeVocabList = activeVocabList.sort(() => Math.random() - 0.5);
+
+        if (activeVocabList.length === 0) {
+            alert("Ausgewählte Lektionen enthalten keine Datensätze!");
+            return;
+        }
+
+        if(checkedLessonsGlobal.length === 35) {
+            unlockAchievement("all_lessons");
+        }
+
+        initiateQuizCore();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function initiateQuizCore() {
+
+hideAllPopups();
+
+    if (musicEnabled) {
+        bgMusic.play().catch(() => {});
+    }
+
+    playSound("success");
+
+
+        maxHintsAllowed = Math.round(
+    activeVocabList.length * levelHintPercentages[selectedLevel]
+);
+
+hintsUsedCount = 0;
+
+maxJokersAllowed = Math.round(
+    activeVocabList.length * levelJokerPercentages[selectedLevel]
+);
+
+// Level 1 und 2 dürfen keine Joker haben
+if (selectedLevel < 3) {
+    maxJokersAllowed = 0;
+}
+
+jokersUsedCount = 0;
+
+        currentIndex = 0;
+        score = 0;
+        currentStreak = 0;
+        maxStreakInSession = 0;
+        wrongVocabRegistry = [];
+        maxPossibleScore = activeVocabList.length * 3;
+        currentGeneratedSpickzettelText = "";
+        wasTimeoutTriggered = false;
+
+        const secondsPerQuestion = {
+    1: 60,
+    2: 45,
+    3: 60,
+    4: 45,
+    5: 45
+};
+
+secondsRemaining =
+    activeVocabList.length * secondsPerQuestion[selectedLevel];
+
+        totalSecondsElapsed = 0;
+        
+        document.getElementById("level-indicator-icon").src = `Level ${selectedLevel}.png`;
+        document.getElementById("score-text").innerText = "Punkte: 0";
+        document.getElementById("streak-badge").style.display = "none";
+        
+        document.getElementById("main-menu-controls").style.display = "none";
+        
+        document.documentElement.scrollIntoView({ behavior: 'smooth' });
+        document.getElementById("setup-screen").classList.remove("active");
+        document.getElementById("quiz-screen").classList.add("active");
+
+        showQuestion();
+        startTimer();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function showQuestion() {
+
+
+const currentItem = activeVocabList[currentIndex];
+const expectedGenders = extractGendersArray(currentItem.grammar);
+const isNoun = expectedGenders.length > 0;
+
+const hasGrammarField =
+    currentItem.grammar &&
+    currentItem.grammar.toLowerCase().trim() !== "interjektion";
+
+
+    hintUsedThisQuestion = false;
+    jokerUsedThisQuestion = false;
+
+    document.getElementById("btn-hint").disabled = false;
+    document.getElementById("btn-joker").disabled = false;
+
+        const card = document.getElementById("quiz-screen");
+        card.className = "screen card active"; 
+        document.getElementById("feedback-box").style.display = "none";
+        document.getElementById("hint-display").style.display = "none";
+        
+        const inputAns = document.getElementById("input-answer");
+        const inputGramText = document.getElementById("input-grammar-text");
+        const genderWrapper = document.getElementById("gender-checkbox-wrapper");
+        const grammarArea = document.getElementById("grammar-area");
+        
+        inputAns.value = "";
+        inputGramText.value = "";
+        
+        document.getElementById("cb-gender-m").checked = false;
+        document.getElementById("cb-gender-f").checked = false;
+        document.getElementById("cb-gender-n").checked = false;
+        document.getElementById("cb-gender-q").checked = false;
+        
+        inputAns.className = "";
+        inputGramText.className = "flex-2-3";
+        genderWrapper.className = "gender-checkbox-group";
+        
+        inputAns.disabled = false;
+        inputGramText.disabled = false;
+        document.getElementById("cb-gender-m").disabled = false;
+        document.getElementById("cb-gender-f").disabled = false;
+        document.getElementById("cb-gender-n").disabled = false;
+        document.getElementById("cb-gender-q").disabled = false;
+        
+        document.getElementById("btn-hint").style.display = "inline-block"; 
+        document.getElementById("btn-joker").style.display = (selectedLevel >= 3) ? "inline-block" : "none"; 
+
+        document.getElementById("btn-check").innerText = "Prüfen";
+        document.getElementById("btn-check").disabled = true; 
+        document.getElementById("btn-dont-know").disabled = false;
+        
+        document.getElementById("btn-hint").disabled = (hintsUsedCount >= maxHintsAllowed);
+       
+        
+        updateCountersText();
+
+        document.getElementById("progress-text").innerText = `Frage ${currentIndex + 1} / ${activeVocabList.length}`;
+        document.getElementById("progress-bar").style.width = `${((currentIndex + 1) / activeVocabList.length) * 100}%`;
+
+
+if (selectedLevel === 3 || selectedLevel === 4) {
+
+    grammarArea.style.display = "block";
+
+    genderWrapper.style.display =
+        isNoun ? "flex" : "none";
+
+    inputGramText.style.display = "none";
+}
+
+else if (selectedLevel === 5) {
+
+    grammarArea.style.display = "block";
+
+    genderWrapper.style.display =
+        isNoun ? "flex" : "none";
+
+    inputGramText.style.display =
+        hasGrammarField ? "block" : "none";
+}
+
+else {
+
+    grammarArea.style.display = "none";
+}
+
+        const lessonText = currentItem.lektion === 0 ? "Salve" : `Lektion ${currentItem.lektion}`;
+        document.getElementById("lesson-badge").innerText = (isVaultModeActive ? "🎒 AUS DEM TRESOR | " : "") + `Herkunft: ${lessonText}`;
+
+        
+        if (selectedMode === 3) {
+            currentDirection = Math.random() < 0.5 ? "lat-ger" : "ger-lat";
+        } else {
+            currentDirection = selectedMode === 1 ? "lat-ger" : "ger-lat";
+        }
+
+        if (currentDirection === "lat-ger") {
+            document.getElementById("direction-hint").innerText = "Übersetze auf Deutsch:";
+            document.getElementById("question-word").innerText = currentItem.latin;
+        } else {
+            document.getElementById("direction-hint").innerText = "Übersetze auf Latein:";
+            document.getElementById("question-word").innerText = currentItem.german.split(",")[0].trim();
+        }
+        
+        if (currentStreak >= 3) {
+            document.getElementById("streak-count").innerText = currentStreak;
+            document.getElementById("streak-badge").style.display = "inline-flex";
+        } else {
+            document.getElementById("streak-badge").style.display = "none";
+        }
+
+        inputAns.focus();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function updateCountersText() {
+        document.getElementById("hint-counter").innerText = `Tipps: ${maxHintsAllowed - hintsUsedCount} | Joker: ${maxJokersAllowed - jokersUsedCount}`;
+    }
+
+    function useHint() {
+
+if (hintUsedThisQuestion) {
+    return;
+}
+
+hintUsedThisQuestion = true;
+document.getElementById("btn-hint").disabled = true;
+
+        if (hintsUsedCount >= maxHintsAllowed) return;
+
+        hintsUsedCount++;
+        updateCountersText();
+        if (hintsUsedCount >= maxHintsAllowed) document.getElementById("btn-hint").disabled = true;
+
+        const currentItem = activeVocabList[currentIndex];
+        const hintBox = document.getElementById("hint-display");
+        hintBox.style.display = "block";
+        
+        let hintHtml = "";
+        if (currentItem.mnemonic) {
+            hintHtml += `💡 <b>Eselsbrücke:</b> ${currentItem.mnemonic}<br>`;
+        }
+        
+        if (currentDirection === "lat-ger") {
+            const start = currentItem.german.split(",")[0].trim().substring(0, 2);
+            hintHtml += `🔍 Übersetzung startet mit: <b>${start}...</b>`;
+        } else {
+            hintHtml += `🔍 Vokabel startet mit: <b>${currentItem.latin.substring(0, 2)}...</b>`;
+        }
+        
+        hintBox.innerHTML = hintHtml;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function useJoker() {
+
+    if (jokerUsedThisQuestion) {
+        return;
+    }
+
+    jokerUsedThisQuestion = true;
+    document.getElementById("btn-joker").disabled = true;
+
+        if (jokersUsedCount >= maxJokersAllowed || selectedLevel < 3) return;
+
+        jokersUsedCount++;
+        updateCountersText();
+        if (jokersUsedCount >= maxJokersAllowed) document.getElementById("btn-joker").disabled = true;
+
+        const currentItem = activeVocabList[currentIndex];
+        
+        const expectedGenders = extractGendersArray(currentItem.grammar);
+        document.getElementById("cb-gender-m").checked = expectedGenders.includes("m");
+        document.getElementById("cb-gender-f").checked = expectedGenders.includes("f");
+        document.getElementById("cb-gender-n").checked = expectedGenders.includes("n");
+        document.getElementById("cb-gender-q").checked = false;
+
+validateFieldsFilled();
+
+        if (selectedLevel === 5) {
+            const expectedPureGrammar = extractPureGrammarText(currentItem.grammar);
+
+            document.getElementById("input-grammar-text").value = expectedPureGrammar === "" ? "-" : expectedPureGrammar;
+        }
+
+        unlockAchievement("joker_user");
+        unlockAchievement("joker_double");
+        validateFieldsFilled();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function checkIntelligentTranslation(userInput, correctString, direction) {
+
+    if (!correctString) {
+        console.error("correctString undefined");
+        return false;
+    }
+
+    let cleanedUser = normalize(userInput, caseCorrectionEnabled);
+
+    let answers = correctString.split(",");
+
+    answers = answers.map(a =>
+        normalize(a, caseCorrectionEnabled)
+    );
+
+    return answers.includes(cleanedUser);
+}
+
+
+
+
+
+
+
+
+
+
+function checkAnswer() {
+
+const currentItem = activeVocabList[currentIndex];
+let correctString =
+    currentDirection === "ger-lat"
+        ? currentItem?.latin
+        : currentItem?.german;
+
+if (!correctString) {
+    console.error("correctString ist undefined!", currentItem, currentDirection);
+    return;
+}
+const expectedGenders = extractGendersArray(currentItem.grammar);
+const isNoun = expectedGenders.length > 0;
+
+const hasGrammarField =
+    currentItem.grammar &&
+    currentItem.grammar.toLowerCase().trim() !== "interjektion";
+
+
+        const btnCheck = document.getElementById("btn-check");
+        const card = document.getElementById("quiz-screen");
+        
+        if (btnCheck.innerText === "Weiter") {
+            currentIndex++;
+            if (currentIndex >= activeVocabList.length) endQuiz();
+            else showQuestion();
+            return;
+        }
+
+        const userAns = document.getElementById("input-answer").value;
+        const userGramText = document.getElementById("input-grammar-text").value.trim().replace(/\s+/g, " ").toLowerCase();
+        const userGenders = getSelectedGendersFromUI();
+        
+
+if (!correctString) {
+    console.error("correctString ist undefined!", currentItem, currentDirection);
+    return;
+}
+
+let isTranslationCorrect = checkIntelligentTranslation(
+    userAns,
+    correctString,
+    currentDirection
+);
+        let isGenderCorrect = false;
+        let isGrammarTextCorrect = false;
+
+        let questionPointsWon = 0;
+
+        const expectedPureGrammar = extractPureGrammarText(currentItem.grammar);
+        
+        const normalizedExpectedPureGrammar = expectedPureGrammar.trim().replace(/\s+/g, " ").toLowerCase();
+
+        if (userGenders.includes("?")) {
+            isGenderCorrect = false;
+        } else if (expectedGenders.length === userGenders.length && expectedGenders.every(g => userGenders.includes(g))) {
+            isGenderCorrect = true;
+        }
+
+        if (expectedPureGrammar === "") {
+            if (userGramText === "" || userGramText === "-") {
+                isGrammarTextCorrect = true;
+            }
+        } else {
+            if (userGramText === normalizedExpectedPureGrammar)
+    isGrammarTextCorrect = true;
+        }
+
+        const inputAns = document.getElementById("input-answer");
+        const genderWrapper = document.getElementById("gender-checkbox-wrapper");
+        const inputGramT = document.getElementById("input-grammar-text");
+
+        if (selectedLevel === 1 || selectedLevel === 2) {
+            if (isTranslationCorrect) {
+                questionPointsWon = 3;
+                inputAns.classList.add("field-correct");
+            } else {
+                inputAns.classList.add("field-wrong");
+            }
+        } 
+        else if (selectedLevel === 3 || selectedLevel === 4) {
+
+    if (isTranslationCorrect) {
+        questionPointsWon += 2;
+
+        // Geschlechtspunkt auf Übersetzung verschieben
+        if (!isNoun) {
+            questionPointsWon += 1;
+        }
+
+        inputAns.classList.add("field-correct");
+    } else {
+        inputAns.classList.add("field-wrong");
+    }
+
+if (isNoun) {
+
+    if (isGenderCorrect) {
+        questionPointsWon += 1;
+        genderWrapper.classList.add("field-correct");
+    } else {
+        genderWrapper.classList.add("field-wrong");
+    }
+
+}
+}
+        else if (selectedLevel === 5) {
+
+    // Übersetzung
+    if (isTranslationCorrect) {
+        questionPointsWon += 1;
+
+        // Geschlechtspunkt auf Übersetzung verschieben
+        if (!isNoun) {
+            questionPointsWon += 1;
+        }
+
+        inputAns.classList.add("field-correct");
+    } else {
+        inputAns.classList.add("field-wrong");
+    }
+
+    // Geschlecht
+if (isNoun) {
+
+    if (isGenderCorrect) {
+        questionPointsWon += 1;
+        genderWrapper.classList.add("field-correct");
+    } else {
+        genderWrapper.classList.add("field-wrong");
+    }
+
+}
+
+   // Grammatik
+if (hasGrammarField) {
+
+    if (isGrammarTextCorrect) {
+        questionPointsWon += 1;
+        inputGramT.classList.add("field-correct");
+    } else {
+        inputGramT.classList.add("field-wrong");
+    }
+
+ } else {
+
+    // Kein Grammatikfeld vorhanden
+    if (isTranslationCorrect) {
+        questionPointsWon += 1;
+    }
+
+}
+}
+
+document.getElementById("btn-joker").disabled =
+    (jokersUsedCount >= maxJokersAllowed) ||
+    (!isNoun && !hasGrammarField);
+
+
+        score += questionPointsWon;
+        document.getElementById("score-text").innerText = `Punkte: ${score}`;
+
+        if (questionPointsWon === 3) {
+            currentStreak++;
+            if (currentStreak > maxStreakInSession) {
+                maxStreakInSession = currentStreak;
+            }
+            if (currentStreak >= 3) unlockAchievement("perfect_streak_3");
+            if (currentStreak >= 5) unlockAchievement("streak_5");
+            if (currentStreak >= 10) unlockAchievement("streak_10");
+            if (currentStreak >= 15) unlockAchievement("streak_15");
+            if (currentStreak >= 20) unlockAchievement("streak_20");
+            if (currentStreak >= 25) unlockAchievement("streak_25");
+
+            if(currentItem.latin === "salve") unlockAchievement("salve_master");
+            if(currentItem.latin === "roma") unlockAchievement("roma_master");
+
+            if (isVaultModeActive) {
+                removeWordFromVault(currentItem);
+                unlockAchievement("perfect_vault");
+            }
+            playSound('correct');
+        } else {
+            currentStreak = 0; 
+            addWordToVault(currentItem);
+
+            if (questionPointsWon > 0) playSound('partial');
+            else playSound('wrong');
+        }
+
+        if (questionPointsWon <= 1) {
+            wrongVocabRegistry.push(currentItem);
+        }
+
+        inputAns.disabled = true;
+        inputGramT.disabled = true;
+        document.getElementById("cb-gender-m").disabled = true;
+        document.getElementById("cb-gender-f").disabled = true;
+        document.getElementById("cb-gender-n").disabled = true;
+        document.getElementById("cb-gender-q").disabled = true;
+        document.getElementById("btn-dont-know").disabled = true;
+
+        const feedbackBox = document.getElementById("feedback-box");
+        feedbackBox.style.display = "block";
+
+        if (questionPointsWon === 3) {
+            card.classList.add("border-3-pts");
+            feedbackBox.className = "feedback correct";
+            feedbackBox.innerHTML = `🎉 <b>Perfekt! Alle 3 Punkte geholt!</b><br>➔ ${currentItem.latin} = ${currentItem.german}<br>➔ Grammatik: [${currentItem.grammar}]`;
+        } else if (questionPointsWon === 2) {
+            card.classList.add("border-2-pts");
+            feedbackBox.className = "feedback partial";
+            feedbackBox.innerHTML = `🟡 <b>Stark! 2 Punkte verdient!</b><br>Schau dir das rote Feld an, um aus dem Fehler zu lernen.<br><br><b>Richtige Lösung:</b><br>➔ Latein: <b>${currentItem.latin}</b><br>➔ Deutsch: ${currentItem.german}<br>➔ Grammatik: <b>${currentItem.grammar}</b>`;
+        } else if (questionPointsWon === 1) {
+            card.classList.add("border-1-pt");
+            feedbackBox.className = "feedback partial";
+            feedbackBox.innerHTML = `🟠 <b>Immerhin 1 Punkt gerettet!</b><br>Da geht noch mehr. Übung macht den Meister!<br><br><b>Richtige Lösung:</b><br>➔ Latein: <b>${currentItem.latin}</b><br>➔ Deutsch: ${currentItem.german}<br>➔ Grammatik: <b>${currentItem.grammar}</b>`;
+        } else {
+            card.classList.add("border-0-pts");
+            feedbackBox.className = "feedback wrong";
+            feedbackBox.innerHTML = `❌ <b>0 Punkte bei dieser Frage.</b><br>Keine Sorge, einfach einprägen und weitermachen!<br><br><b>Richtige Lösung:</b><br>➔ Latein: <b>${currentItem.latin}</b><br>➔ Deutsch: ${currentItem.german}<br>➔ Grammatik: <b>${currentItem.grammar}</b>`;
+        }
+
+        btnCheck.innerText = "Weiter";
+        btnCheck.disabled = false;
+        btnCheck.focus();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function skipWithDontKnow() {
+        const card = document.getElementById("quiz-screen");
+        const currentItem = activeVocabList[currentIndex];
+
+        currentStreak = 0; 
+        playSound('wrong');
+        wrongVocabRegistry.push(currentItem); 
+        addWordToVault(currentItem); 
+        unlockAchievement("quick_skip");
+        unlockAchievement("skip_three");
+
+        document.getElementById("input-answer").disabled = true;
+        document.getElementById("input-grammar-text").disabled = true;
+        document.getElementById("cb-gender-m").disabled = true;
+        document.getElementById("cb-gender-f").disabled = true;
+        document.getElementById("cb-gender-n").disabled = true;
+        document.getElementById("cb-gender-q").disabled = true;
+        document.getElementById("btn-dont-know").disabled = true;
+        
+        document.getElementById("hint-display").style.display = "none";
+        document.getElementById("btn-hint").style.display = "none";
+        document.getElementById("btn-joker").style.display = "none";
+
+        card.classList.add("border-dont-know");
+
+        let hintInfo = "";
+        if (currentItem.mnemonic) {
+            hintInfo += `<br>💡 <b>Eselsbrücke zur Erinnerung:</b> <i>${currentItem.mnemonic}</i>`;
+        }
+
+        const feedbackBox = document.getElementById("feedback-box");
+        feedbackBox.style.display = "block";
+        feedbackBox.className = "feedback blue-info";
+        feedbackBox.innerHTML = `🔵 <b>Übersprungen (0 Punkte).</b><br>Völlig okay! Merk dir das Wort für das nächste Mal:<br><br>➔ Latein: <b>${currentItem.latin}</b><br>➔ Deutsch: ${currentItem.german}<br>➔ Grammatik: <b>${currentItem.grammar}</b>${hintInfo}`;
+
+        const btnCheck = document.getElementById("btn-check");
+        btnCheck.innerText = "Weiter";
+        btnCheck.disabled = false;
+        btnCheck.focus();
+    }
+
+
+
+
+
+
+
+
+
+    let advancedModeEnabled =
+    localStorage.getItem("advancedModeEnabled") === "true";
+
+function toggleAdvancedMode() {
+
+    const lockBtn = document.getElementById("advanced-mode-btn");
+    const terminalBtn = document.getElementById("terminal-btn");
+
+    advancedModeEnabled = !advancedModeEnabled;
+
+    localStorage.setItem(
+        "advancedModeEnabled",
+        advancedModeEnabled
+    );
+
+    if (advancedModeEnabled) {
+
+        lockBtn.textContent = "🔓";
+        lockBtn.title = "Deaktiviere erweiterten Modus";
+
+        terminalBtn.style.display = "block";
+
+    } else {
+
+        lockBtn.textContent = "🔐";
+        lockBtn.title = "Aktiviere erweiterten Modus";
+
+        terminalBtn.style.display = "none";
+
+        closeTerminal();
+    }
+}
+
+
+
+
+
+
+
+
+
+    function endQuiz() {
+
+bgMusic.pause();
+bgMusic.currentTime = 0;
+
+        if(timerInterval) clearInterval(timerInterval);
+
+        document.getElementById("quiz-screen").classList.remove("active");
+        const resultScreen = document.getElementById("result-screen");
+        resultScreen.className = "screen card active"; 
+        
+        document.getElementById("result-level-icon").src = `Level ${selectedLevel}.png`;
+
+        const timeoutNotice = document.getElementById("timeout-warning-notice");
+        const resultHeadline = document.getElementById("result-headline-title");
+        if (wasTimeoutTriggered) {
+            timeoutNotice.style.display = "block";
+            resultHeadline.innerText = "Auswertung ⏳";
+        } else {
+            timeoutNotice.style.display = "none";
+            resultHeadline.innerText = "Auswertung 🎉";
+        }
+        
+        const textLessons = checkedLessonsGlobal.map(l => l === 0 ? "Salve" : `Lektion ${l}`).join(", ");
+        document.getElementById("final-lessons-list").innerHTML = `<b>Abgefragte Lektionen:</b> ${textLessons}`;
+        document.getElementById("final-lessons-list").style.display = "none";
+
+        const spickBox = document.getElementById("spickzettel-area");
+        const spickListe = document.getElementById("spickzettel-liste");
+        spickListe.innerHTML = "";
+        
+        let percentageResult = Math.round((score / maxPossibleScore) * 100);
+        if (percentageResult < 0) percentageResult = 0;
+        const finalGrade = calculateGrade(percentageResult);
+
+if (
+    finalGrade === "1+" ||
+    finalGrade === "1" ||
+    finalGrade === "1-" ||
+    finalGrade === "2+" ||
+    finalGrade === "2"
+) {
+    playSound("success");
+} else {
+    playSound("fail");
+}
+
+        const timeStringFormatted = `${Math.floor(totalSecondsElapsed / 60)}:${(totalSecondsElapsed % 60).toString().padStart(2, '0')} Min.`;
+
+        if (wrongVocabRegistry.length > 0) {
+            spickBox.style.display = "block";
+            const uniqueWrong = [...new Set(wrongVocabRegistry)];
+            
+            currentGeneratedSpickzettelText = `=== MEIN LATEIN SPICKZETTEL ===\nGeneriert am: ${new Date().toLocaleString("de-DE")}\nBenötigte Zeit: ${timeStringFormatted}\nErgebnis: ${score} / ${maxPossibleScore} Punkte (Note: ${finalGrade})\n\nDiese Vokabeln solltest du wiederholen:\n\n`;
+
+            uniqueWrong.forEach((v, index) => {
+                spickListe.innerHTML += `<li><b>${v.latin}</b> = ${v.german} <span style="opacity:0.7; font-size:11px;">(${v.grammar})</span></li>`;
+                currentGeneratedSpickzettelText += `${index + 1}) Latein: ${v.latin}\n   Deutsch: ${v.german}\n   Grammatik/Formen: ${v.grammar}\n----------------------------------------\n`;
+            });
+        } else {
+            spickBox.style.display = "none";
+            currentGeneratedSpickzettelText = "";
+            if (!wasTimeoutTriggered) unlockAchievement("clean_sheet");
+        }
+
+        document.getElementById("final-score").innerText = `${score} / ${maxPossibleScore}`;
+        document.getElementById("grade-display").innerText = `Note: ${finalGrade}`;
+
+        const borderClass = getGradeBorderClass(finalGrade);
+        resultScreen.classList.add(borderClass);
+
+        document.getElementById("final-stats").innerText = `Du hast das Training auf Level ${selectedLevel} beendet. Deine erzielte Gesamtpunktzahl liegt bei ${score} von ${maxPossibleScore} Punkten (Quote: ${percentageResult}%). Benötigte Gesamtzeit: ${timeStringFormatted}. Dein bester Streak lag bei ${maxStreakInSession} fehlerfreien Antworten!`;
+
+        saveHighscore(textLessons, selectedLevel, `${score}/${maxPossibleScore}`, timeStringFormatted, maxStreakInSession, finalGrade);
+        incrementLevelCounter(selectedLevel);
+
+        let totalRuns = parseInt(localStorage.getItem("latin_total_runs_count") || "0");
+        totalRuns++;
+        localStorage.setItem("latin_total_runs_count", totalRuns.toString());
+
+        if(document.documentElement.getAttribute("data-theme") === "dark") unlockAchievement("dark_learner");
+        else unlockAchievement("light_learner");
+
+        unlockAchievement("first_quiz");
+        unlockAchievement("high_score_entry");
+        if(totalRuns >= 10) unlockAchievement("ten_times_quiz");
+        if(totalRuns >= 20) unlockAchievement("run_20");
+        if(totalRuns >= 50) unlockAchievement("run_50");
+        
+        if (selectedMode === 1) unlockAchievement("mode_lat_de");
+        if (selectedMode === 2) unlockAchievement("mode_de_lat");
+        if (selectedMode === 3) unlockAchievement("mode_random");
+        if (localStorage.getItem("latin_quiz_highscores") && JSON.parse(localStorage.getItem("latin_quiz_highscores")).length >= 3) unlockAchievement("all_modes");
+
+        if (hintsUsedCount === 0 && percentageResult >= 50) {
+            unlockAchievement("no_hints_win");
+            if(selectedLevel === 4) unlockAchievement("no_hints_lvl4");
+            if(selectedLevel === 5) unlockAchievement("no_hints_lvl5");
+        }
+        
+        if (score > 50) unlockAchievement("half_century");
+        if (score > 100) unlockAchievement("hundred_club");
+        if (score > 150) unlockAchievement("score_150");
+        if (score > 200) unlockAchievement("score_200");
+
+        if (finalGrade === "1" || finalGrade === "1+") {
+            if(selectedLevel === 1) unlockAchievement("perfect_1");
+            if(selectedLevel === 2) unlockAchievement("perfect_2");
+            if(selectedLevel === 3) unlockAchievement("perfect_3");
+            if(selectedLevel === 4) unlockAchievement("perfect_4");
+            if(selectedLevel === 5) unlockAchievement("perfect_5");
+        }
+        if (finalGrade === "1+") unlockAchievement("grade_1_plus");
+        if (percentageResult >= 80) unlockAchievement("grade_2");
+        if (finalGrade === "4" || finalGrade === "4+" || finalGrade === "4-") unlockAchievement("survivor");
+
+        if (selectedLevel === 5 && jokersUsedCount === 0 && (finalGrade.startsWith("1") || finalGrade.startsWith("2"))) {
+            unlockAchievement("no_joker_lvl5");
+        }
+
+        if (activeVocabList.length >= 5 && totalSecondsElapsed < 60) unlockAchievement("speedy");
+        if (activeVocabList.length >= 5 && totalSecondsElapsed < 120) unlockAchievement("speed_120");
+
+        const hr = new Date().getHours();
+        if (hr >= 22 || hr < 5) unlockAchievement("night_owl");
+        if (hr >= 5 && hr < 8) unlockAchievement("early_bird");
+        if (hr >= 12 && hr < 14) unlockAchievement("lunch_break");
+        if (hr >= 14 && hr < 17) unlockAchievement("after_school");
+        if (hr >= 18 && hr < 21) unlockAchievement("prime_time");
+
+        if (secondsRemaining <= 5 && secondsRemaining > 0) unlockAchievement("lucky_last");
+
+        if(getUnlockedAchievements().length >= 32) unlockAchievement("completionist");
+
+        const recBox = document.getElementById("level-recommendation");
+        if (finalGrade.startsWith("1") || finalGrade === "2+" || finalGrade === "2") {
+            if (selectedLevel < 5) {
+                recBox.innerHTML = "🚀 <b>Super Ergebnis!</b> Du hast dieses Level meisterhaft beherrscht. Probier doch beim nächsten Mal eine <b>schwerere Stufe</b> aus!";
+            } else {
+                recBox.innerHTML = "👑 <b>Absolutes Maximum erreicht!</b> Du hast das schwerste Level mit Bravour gemastert. Legendäre Leistung!";
+            }
+        } 
+        else if (finalGrade === "2-" || finalGrade.startsWith("3")) {
+            recBox.innerHTML = "🔄 <b>Gute Arbeit!</b> Übe die Vokabeln am besten noch einmal und probiere <b>dieses Level nochmals</b>.";
+        } 
+        else { 
+            if (selectedLevel > 1) {
+                recBox.innerHTML = "📉 <b>Lass den Kopf nicht hängen!</b> Probiere am besten erst einmal ein <b>einfacheres Level</b> aus.";
+            } else {
+                recBox.innerHTML = "📚 <b>Kein Problem!</b> Wiederhole die Lektionen noch einmal in Ruhe.";
+            }
+        }
+        
+        updateVaultBadge();
+    }
+
+    function downloadSpickzettelFile() {
+        if (!currentGeneratedSpickzettelText) return;
+        const blob = new Blob([currentGeneratedSpickzettelText], { type: "text/plain;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "Latein_Spickzettel_Wiederholung.txt";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    function saveHighscore(lessons, level, scoreStr, durationStr, streakVal, grade) {
+        let scores = JSON.parse(localStorage.getItem("latin_quiz_highscores")) || [];
+        const now = new Date();
+        const dateStr = now.toLocaleDateString("de-DE", {day: '2-digit', month: '2-digit', year: '2-digit'});
+        const timeStr = now.toLocaleTimeString("de-DE", {hour: '2-digit', minute:'2-digit'});
+        const fullDateTime = `${timeStr} (${dateStr})`;
+        
+        scores.unshift({ date: fullDateTime, lessons: lessons, level: "Lvl " + level, score: scoreStr, time: durationStr, streak: streakVal, grade: grade });
+        
+        const gradesOnly = scores.map(s => s.grade);
+        const countOnes = gradesOnly.filter(g => g === "1" || g === "1+").length;
+        if(countOnes >= 2) unlockAchievement("double_one");
+        if(countOnes >= 3) unlockAchievement("triple_one");
+        if(scores.length >= 5) unlockAchievement("full_history");
+
+        scores = scores.slice(0, 5);
+        localStorage.setItem("latin_quiz_highscores", JSON.stringify(scores));
+    }
+
+    function renderHighscores() {
+        const scores = JSON.parse(localStorage.getItem("latin_quiz_highscores")) || [];
+        const tbody = document.getElementById("highscore-tbody");
+        const box = document.getElementById("highscore-box");
+        
+        if (scores.length === 0) {
+            box.style.display = "none";
+            return;
+        }
+        
+        box.style.display = "block";
+        tbody.innerHTML = "";
+        
+        scores.forEach(s => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${s.date}</td>
+                    <td style="max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${s.lessons}">${s.lessons}</td>
+                    <td>${s.level}</td>
+                    <td><b>${s.score}</b></td>
+                    <td>⏱️ ${s.time || '--'}</td>
+                    <td>🔥 ${s.streak || 0}</td>
+                    <td><span style="background:var(--neutral); padding:2px 6px; border-radius:4px; font-weight:bold;">${s.grade}</span></td>
+                </tr>
+            `;
+        });
+    }
+
+    function getUnlockedAchievements() {
+        return JSON.parse(localStorage.getItem("latin_unlocked_achievements")) || [];
+    }
+
+    function unlockAchievement(key) {
+    let unlocked = getUnlockedAchievements();
+
+    if(!unlocked.includes(key)) {
+        unlocked.push(key);
+        localStorage.setItem(
+            "latin_unlocked_achievements",
+            JSON.stringify(unlocked)
+        );
+
+        playSound("achievement");
+    }
+}
+
+    function openAchievements() {
+
+ hideAllPopups();
+
+        document.getElementById("setup-screen").classList.remove("active");
+        document.getElementById("achievements-screen").classList.add("active");
+        document.getElementById("main-menu-controls").style.display = "none";
+
+        const renderGrid = document.getElementById("achievements-render-grid");
+        renderGrid.innerHTML = "";
+
+        const unlocked = getUnlockedAchievements();
+
+        achievementDefinitions.forEach(ach => {
+            const isUnlocked = unlocked.includes(ach.key);
+            const statusClass = isUnlocked ? "achievement-item unlocked" : "achievement-item";
+            const textureSrc = isUnlocked ? "pokal_1.png" : "pokal_0.png";
+
+            renderGrid.innerHTML += `
+                <div class="${statusClass}">
+                    <img src="${textureSrc}" alt="Icon">
+                    <div class="achievement-info">
+                        <h4>${ach.title}</h4>
+                        <p>${ach.desc}</p>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    function closeAchievements() {
+        document.getElementById("achievements-screen").classList.remove("active");
+        document.getElementById("setup-screen").classList.add("active");
+        document.getElementById("main-menu-controls").style.display = "flex";
+        renderHighscores();
+    }
+
+function openHelpRoom() {
+
+ hideAllPopups();
+
+    document.getElementById("setup-screen").classList.remove("active");
+    document.getElementById("help-screen").classList.add("active");
+    document.getElementById("main-menu-controls").style.display = "none";
+}
+
+function closeHelpRoom() {
+    document.getElementById("help-screen").classList.remove("active");
+    document.getElementById("setup-screen").classList.add("active");
+    document.getElementById("main-menu-controls").style.display = "flex";
+}
+
+    // TERMINAL INTERAKTIONS MANAGEMENT
+    function openTerminal() {
+
+ hideAllPopups();
+
+        document.getElementById("setup-screen").classList.remove("active");
+        document.getElementById("terminal-screen").classList.add("active");
+        document.getElementById("main-menu-controls").style.display = "none";
+        
+        document.getElementById("terminal-input-field").focus();
+    }
+
+    function closeTerminal() {
+        document.getElementById("terminal-screen").classList.remove("active");
+        document.getElementById("setup-screen").classList.add("active");
+        document.getElementById("main-menu-controls").style.display = "flex";
+        updateVaultBadge();
+        renderHighscores();
+    }
+
+    function logToTerminal(text, type = "info") {
+        const logBox = document.getElementById("terminal-log-output");
+        const prefix = type === "cmd" ? "➔ " : "[SYSTEM]: ";
+        logBox.innerHTML += `<div>${prefix}${text}</div>`;
+        logBox.scrollTop = logBox.scrollHeight; 
+    }
+
+    function downloadCommandsTxtFile() {
+        let cmdListText = "=== VERFÜGBARE SYSTEM-BEFEHLE ===\n\n" +
+                         "/clearallachievements   -> Löscht den gesamten Achievement-Fortschritt.\n" +
+                         "/filltresorall          -> Füllt den Tresor mit absolut allen Vokabeln.\n" +
+                         "/filltresor:lektionX    -> Füllt den Tresor mit Vokabeln aus Lektion X (0-23).\n" +
+                         "/cleartresor            -> Löscht alle Vokabeln rückstandslos aus dem Tresor.\n" +
+                         "/clearranking           -> Setzt die Top-5-Verlaufstabelle komplett zurück.\n" +
+                         "/clear                  -> Löscht den aktuellen Verlauf des Terminals.\n" +
+                         "/lightmode              -> Aktiviert das helle Design (Light Mode).\n" +
+                         "/darkmode               -> Aktiviert das dunkle Design (Dark Mode).\n" +
+                         "/mute                   -> Schaltet alle Systemtöne stumm.\n" +
+                         "/unmute                 -> Aktiviert die Systemtöne wieder.\n" +
+                         "/level1 bis /level5     -> Setzt das aktive Trainings-Level fest.\n" +
+                         "/givecommands           -> Zeigt alle Befehle hier an und lädt sie herunter.\n";
+        
+        const blob = new Blob([cmdListText], { type: "text/plain;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "Kommandozeile_Befehlsliste.txt";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    function processTerminalCommand() {
+        const inputField = document.getElementById("terminal-input-field");
+        const rawCmd = inputField.value.trim();
+        inputField.value = "";
+
+        if (rawCmd === "") return;
+
+        logToTerminal(rawCmd, "cmd");
+
+        if (rawCmd === "/giveallachievements") {
+
+if (cheatsLocked()) {
+    logToTerminal(
+        "Dieser Befehl wurde vom Administrator gesperrt.",
+        "error"
+    );
+    return;
+}
+
+            const keys = achievementDefinitions.map(a => a.key);
+            localStorage.setItem("latin_unlocked_achievements", JSON.stringify(keys));
+            logToTerminal("Erfolg! Alle 64 Errungenschaften wurden freigeschaltet.", "sys");
+        } 
+        else if (rawCmd === "/clearallachievements") {
+            localStorage.removeItem("latin_unlocked_achievements");
+            logToTerminal("System-Reset durchgeführt: Alle Errungenschaften gelöscht.", "sys");
+        } 
+        else if (rawCmd === "/cleartresor") {
+
+if (cheatsLocked()) {
+    logToTerminal(
+        "Dieser Befehl wurde vom Administrator gesperrt.",
+        "error"
+    );
+    return;
+}
+
+            saveVaultVocab([]);
+            logToTerminal("Der Problem-Tresor wurde komplett geleert.", "sys");
+        } 
+        else if (rawCmd === "/clearranking") {
+            localStorage.removeItem("latin_quiz_highscores");
+            logToTerminal("Die Verlaufstabelle wurde vollständig zurückgesetzt.", "sys");
+        } 
+        else if (rawCmd === "/filltresorall") {
+            saveVaultVocab([...vocabData]);
+            logToTerminal(`Erfolg! Alle ${vocabData.length} verfügbaren Vokabeln wurden in den Tresor geladen.`, "sys");
+        } 
+        else if (rawCmd === "/clear") {
+            const logBox = document.getElementById("terminal-log-output");
+            logBox.innerHTML = "<div>Terminal-Verlauf gelöscht. Bereit für neue Befehle.</div><div>--------------------------------------------------</div>";
+        }
+        else if (rawCmd === "/lightmode") {
+            document.documentElement.removeAttribute("data-theme");
+            localStorage.setItem("theme", "light");
+            logToTerminal("Helles Design (Light Mode) wurde erfolgreich aktiviert.", "sys");
+        }
+        else if (rawCmd === "/darkmode") {
+            document.documentElement.setAttribute("data-theme", "dark");
+            localStorage.setItem("theme", "dark");
+            logToTerminal("Dunkles Hacker-Design (Dark Mode) wurde erfolgreich aktiviert.", "sys");
+        }
+        else if (rawCmd === "/mute") {
+            isMuted = true;
+            document.getElementById("btn-mute").innerText = "🔇";
+            logToTerminal("Alle Audio-Ausgaben wurden stummgeschaltet.", "sys");
+        }
+        else if (rawCmd === "/unmute") {
+            isMuted = false;
+            document.getElementById("btn-mute").innerText = "🔊";
+            logToTerminal("Audio-Ausgaben wurden reaktiviert.", "sys");
+        }
+
+        else if (rawCmd === "/level1") { selectLevel(1); logToTerminal("Trainingsstufe auf 'Level 1' gesetzt.", "sys"); }
+        else if (rawCmd === "/level2") { selectLevel(2); logToTerminal("Trainingsstufe auf 'Level 2' gesetzt.", "sys"); }
+        else if (rawCmd === "/level3") { selectLevel(3); logToTerminal("Trainingsstufe auf 'Level 3' gesetzt.", "sys"); }
+        else if (rawCmd === "/level4") { selectLevel(4); logToTerminal("Trainingsstufe auf 'Level 4' gesetzt.", "sys"); }
+        else if (rawCmd === "/level5") { selectLevel(5); logToTerminal("Trainingsstufe auf 'Level 5' gesetzt.", "sys"); }
+        else if (rawCmd.startsWith("/filltresor:lektion")) {
+            const val = rawCmd.substring(19).trim();
+            const targetLektion = parseInt(val);
+            if (!isNaN(targetLektion) && targetLektion >= 0 && targetLektion <= 23) {
+                const subList = vocabData.filter(v => v.lektion === targetLektion);
+                if (subList.length > 0) {
+                    let currentVault = getVaultVocab();
+                    subList.forEach(item => {
+                        if(!currentVault.some(v => v.id === item.id)) currentVault.push(item);
+                    });
+                    saveVaultVocab(currentVault);
+                    logToTerminal(`Erfolg! ${subList.length} Vokabeln aus Lektion ${targetLektion} hinzugefügt.`, "sys");
+                } else {
+                    logToTerminal(`Hinweis: Lektion ${targetLektion} besitzt aktuell keine Vokabeldaten im Code.`, "sys");
+                }
+            } else {
+                logToTerminal("Fehler: Syntax ungültig. Nutze z.B. /filltresor:lektion5", "sys");
+            }
+        } 
+        else if (rawCmd === "/givecommands") {
+            logToTerminal("Verfügbare Befehle:<br>" +
+                          "➔ /clearallachievements - Setzt Erfolge zurück<br>" +
+                          "➔ /filltresorall - Füllt Tresor mit allen Worten<br>" +
+                          "➔ /filltresor:lektionX - Füllt Lektion X in Tresor (0-23)<br>" +
+                          "➔ /cleartresor - Leert den Tresor<br>" +
+                          "➔ /clearranking - Löscht die Highscore-Tabelle<br>" +
+                          "➔ /clear - Leert diesen Terminal-Bildschirm<br>" +
+                          "➔ /lightmode - Schaltet auf helles Design um<br>" +
+                          "➔ /darkmode - Schaltet auf dunkles Design um<br>" +
+                          "➔ /mute - Schaltet Töne aus<br>" +
+                          "➔ /unmute - Schaltet Töne ein<br>" +
+                          "➔ /level1 bis /level5 - Ändert das aktive Level", "sys");
+            
+            const logBox = document.getElementById("terminal-log-output");
+            logBox.innerHTML += `<div>[SYSTEM]: Klicke den Button zum Download der Liste:<br><button class="terminal-inline-btn" onclick="downloadCommandsTxtFile()">📄 Liste als .txt herunterladen</button></div>`;
+            logBox.scrollTop = logBox.scrollHeight;
+        } 
+        else if (rawCmd === "/lockcheats") {
+
+    lockCheats();
+
+    logToTerminal(
+        "Cheat-Befehle wurden dauerhaft gesperrt. Diese Einstellung bleibt gespeichert.",
+        "success"
+    );
+
+}
+else if (rawCmd === "/unlockcheats") {
+
+    const password = prompt("Administrator-Passwort:");
+
+    if (password !== "o-a6+ZT3b616,e8Y:fns") {
+        logToTerminal(
+            "Falsches Passwort.",
+            "error"
+        );
+        return;
+    }
+
+    unlockCheats();
+
+    logToTerminal(
+        "Cheat-Befehle wurden wieder freigegeben.",
+        "success"
+    );
+
+}
+else {
+
+    logToTerminal(
+        `Unbekannter Befehl: '${rawCmd}'. Gib '/givecommands' ein für eine Übersicht.`,
+        "sys"
+    );
+
+}
+}
+    function resetQuizApp() {
+
+    bgMusic.pause();
+    bgMusic.currentTime = 0;
+
+    isVaultModeActive = false;
+    document.getElementById("result-screen").classList.remove("active");
+    document.getElementById("quiz-screen").classList.remove("active");
+    document.getElementById("setup-screen").classList.add("active");
+
+    document.getElementById("main-menu-controls").style.display = "flex";
+
+    document.querySelectorAll("#lessons-grid input").forEach(cb => cb.checked = false);
+    updateStartButton();
+    updateVaultBadge();
+    renderHighscores();
+}
+
+function openSoundMenu() {
+    const menu = document.getElementById("sound-menu");
+
+    menu.style.display =
+        menu.style.display === "none" ? "block" : "none";
+}
+
+function closeSoundMenu() {
+    document.getElementById("sound-menu").style.display = "none";
+}
+
+function hideAllPopups() {
+    document.getElementById("sound-menu").style.display = "none";
+}
+
+function setAudioMode(mode) {
+
+    switch(mode) {
+
+        case "all":
+            soundEffectsEnabled = true;
+            musicEnabled = true;
+            bgMusic.muted = false;
+            break;
+
+        case "musicOff":
+            soundEffectsEnabled = true;
+            musicEnabled = false;
+            bgMusic.muted = true;
+            break;
+
+        case "effectsOff":
+            soundEffectsEnabled = false;
+            musicEnabled = true;
+            bgMusic.muted = false;
+            break;
+
+        case "mute":
+            soundEffectsEnabled = false;
+            musicEnabled = false;
+            bgMusic.muted = true;
+            break;
+    }
+
+    closeSoundMenu();
+}
+
+function cheatsLocked() {
+    return localStorage.getItem("latin_cheats_unlocked") !== "true";
+}
+
+function unlockCheats() {
+    localStorage.setItem("latin_cheats_unlocked", "true");
+}
+
+function lockCheats() {
+    localStorage.removeItem("latin_cheats_unlocked");
+}
+  </script>
+ </body>
+</html>
