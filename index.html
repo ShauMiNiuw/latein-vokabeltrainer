@@ -1817,11 +1817,18 @@ const hasGrammarField =
     currentItem.grammar.toLowerCase().trim() !== "interjektion";
 
 
-    hintUsedThisQuestion = false;
-    jokerUsedThisQuestion = false;
+   hintUsedThisQuestion = false;
+jokerUsedThisQuestion = false;
 
-    document.getElementById("btn-hint").disabled = false;
-    document.getElementById("btn-joker").disabled = false;
+document.getElementById("btn-hint").disabled = false;
+
+const jokerBtn = document.getElementById("btn-joker");
+
+const jokerUnavailable =
+    jokersUsedCount >= maxJokersAllowed ||
+    (!isNoun && !hasGrammarField);
+
+jokerBtn.disabled = jokerUnavailable;
 
         const card = document.getElementById("quiz-screen");
         card.className = "screen card active"; 
@@ -1991,8 +1998,27 @@ document.getElementById("btn-hint").disabled = true;
 
 
 
-    function useJoker() {
+function useJoker() {
 
+    const currentItem = activeVocabList[currentIndex];
+
+    const expectedGenders = extractGendersArray(currentItem.grammar);
+    const isNoun = expectedGenders.length > 0;
+
+    const hasGrammarField =
+        currentItem.grammar &&
+        currentItem.grammar.toLowerCase().trim() !== "interjektion";
+
+    // Joker nicht verfügbar
+    if (
+        jokersUsedCount >= maxJokersAllowed ||
+        selectedLevel < 3 ||
+        (!isNoun && !hasGrammarField)
+    ) {
+        return;
+    }
+
+    // Bereits benutzt
     if (jokerUsedThisQuestion) {
         return;
     }
@@ -2000,33 +2026,34 @@ document.getElementById("btn-hint").disabled = true;
     jokerUsedThisQuestion = true;
     document.getElementById("btn-joker").disabled = true;
 
-        if (jokersUsedCount >= maxJokersAllowed || selectedLevel < 3) return;
+    jokersUsedCount++;
+    updateCountersText();
 
-        jokersUsedCount++;
-        updateCountersText();
-        if (jokersUsedCount >= maxJokersAllowed) document.getElementById("btn-joker").disabled = true;
+    document.getElementById("cb-gender-m").checked =
+        expectedGenders.includes("m");
 
-        const currentItem = activeVocabList[currentIndex];
-        
-        const expectedGenders = extractGendersArray(currentItem.grammar);
-        document.getElementById("cb-gender-m").checked = expectedGenders.includes("m");
-        document.getElementById("cb-gender-f").checked = expectedGenders.includes("f");
-        document.getElementById("cb-gender-n").checked = expectedGenders.includes("n");
-        document.getElementById("cb-gender-q").checked = false;
+    document.getElementById("cb-gender-f").checked =
+        expectedGenders.includes("f");
 
-validateFieldsFilled();
+    document.getElementById("cb-gender-n").checked =
+        expectedGenders.includes("n");
 
-        if (selectedLevel === 5) {
-            const expectedPureGrammar = extractPureGrammarText(currentItem.grammar);
+    document.getElementById("cb-gender-q").checked = false;
 
-            document.getElementById("input-grammar-text").value = expectedPureGrammar === "" ? "-" : expectedPureGrammar;
-        }
+    if (selectedLevel === 5) {
 
-        unlockAchievement("joker_user");
-        unlockAchievement("joker_double");
-        validateFieldsFilled();
+        const expectedPureGrammar =
+            extractPureGrammarText(currentItem.grammar);
+
+        document.getElementById("input-grammar-text").value =
+            expectedPureGrammar === "" ? "-" : expectedPureGrammar;
     }
 
+    unlockAchievement("joker_user");
+    unlockAchievement("joker_double");
+
+    validateFieldsFilled();
+}
 
 
 
