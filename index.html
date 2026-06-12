@@ -278,6 +278,9 @@
      <p>
       Hier bekommst du alles rund um die Benutzung des Vokabeltrainers erklärt. Bei Fragen wende dich an den Urheber.
      </p>
+     <p>
+     Der Vokabeltrainer erhält täglich/wöchentlich Updates!
+     </p>
      <h3>
       📚 Lektionen
      </h3>
@@ -417,31 +420,24 @@
       🖋️ Grammatikinformationen
      </h3>
      <p>
-      So trägst du die Vokabeln richtig ein:
-     </p>
-     <p>
-      <b>
-       Allgemein:
-      </b>
-      Trage nur den Inhalt der zweiten Spalte ein (bitte ohne das Geschlecht).
-     </p>
-     <p>
-      <b>
-       Verben:
-      </b>
-      Trage alle Formen wie im Buch ein, getrennt durch ein Komma (z. B. form1, form2, form3).
-     </p>
-     <p>
-      <b>
-       Substantive:
-      </b>
-      Trage die Form aus der zweiten Spalte ein. Falls dort der Genitiv Plural steht, schreibe ihn bitte genau so: Wort (Gen. Pl.: Wort).
-     </p>
-     <p>
      <b>
-     Verschiedenes:
+     Syntax:
      </b>
-     Trage bei Wörtern wie "eum" das Grammatikfeld so ein: eos (sie (maskulin Pl.))
+     </p>
+
+     <p>Kurzformen wie Adv. oder Akk. DÜRFEN statt den ausgeschrieben Formen verwendet werden.</p>
+     <p>Trage NUR den Inhalt der zweiten Spalte ein (NICHT das Geschlecht).</p>
+     <p>Trage ALLE Formen wie im Buch ein, getrennt durch ein KOMMA <b>(form1, form2, form3)</b></p>
+     <p>Trage bei Wörtern wie "eum" das Grammatikfeld so ein: <b>eos (sie (maskulin Plural))</b></p>
+     <p>Trage bei Wörtern wie "ruinae" das Grammatikfeld so ein: <b>ruinarum Plural</b></p>
+     <p>Trage bei Wörtern wie "navis" das Grammatikfeld so ein: <b>navis (Genitiv Plural: navium)</b></p>
+     <p>Trage bei Wörtern wie "ipse" das Grammatikfeld so ein: <b>ipsa, ipsum (Demonstrativpronomen)</b></p>
+     <p>Trage bei Wörtern wie "cuncti" das Grammatikfeld so ein: <b>cunctae, cuncta Plural</b></p>
+     <p>Trage bei Wörtern wie "munus" das Grammatikfeld so ein: <b>munus (Nominativ/Akkusativ Plural: munera)</b></p>
+     <p>Trage bei Wörtern wie "Gallus" das Grammatikfeld so ein: <b>Galli galla, gallum</b></p>
+     <p>Trage bei Wörtern wie "unus" das Grammatikfeld so ein: <b>una, unum (Genitiv: unius, Dativ: uni)</b></p>
+     <p>Trage bei Wörtern mit weiteren Formen in Form von Endungen (-a, -um) IMMER die ausgeschriebenen Wörter ein.</p>
+
      <h3>
       🙂 Geschlechtsfeld
      </h3>
@@ -499,6 +495,7 @@
      <p>
      Aktiviere die Groß- und Kleinschreibkorrektur, um auch auf die Groß- und Kleinschreibung in den Abfragen bewertet zu werden.
      </p>
+
     </div>
     <div style="margin-top:25px;">
      <button class="main-btn" onclick="closeHelpRoom()">
@@ -2097,6 +2094,38 @@ function checkIntelligentTranslation(userInput, correctString, direction) {
 
 
 
+function normalizeGrammarVariants(text) {
+
+    return text
+        .toLowerCase()
+        .replace(/adverb/g, "adv.")
+        .replace(/konjunktion/g, "konj.")
+        .replace(/präposition/g, "präp.")
+        .replace(/plural/g, "pl.")
+        .replace(/singular/g, "sg.")
+        .replace(/akkusativ/g, "akk.")
+        .replace(/ablativ/g, "abl.")
+        .replace(/dativ/g, "dat.")
+        .replace(/pronomen/g, "pron.")
+        .replace(/demonstrativ/g, "dem.")
+        .replace(/jemandem/g, "jdm.")
+        .replace(/jemanden/g, "jdn.")
+        .replace(/possessivpronomen/g, "poss.")
+        .replace(/nominativ/g, "nom.")
+        .replace(/infinitiv/g, "inf.")
+        .replace(/perfekt/g, "perf.")
+        .replace(/relativ/g, "rel.")
+        .replace(/imperfekt/g, "impf.")
+        .replace(/etwas/g, "etw.")
+        .replace(/präsens/g, "präs.")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+
+
+
+
 
 
 
@@ -2160,15 +2189,25 @@ let isTranslationCorrect = checkIntelligentTranslation(
             isGenderCorrect = true;
         }
 
-        if (expectedPureGrammar === "") {
-            if (userGramText === "" || userGramText === "-") {
-                isGrammarTextCorrect = true;
-            }
-        } else {
-            if (userGramText === normalizedExpectedPureGrammar)
-    isGrammarTextCorrect = true;
-        }
+if (expectedPureGrammar === "") {
 
+    if (userGramText === "" || userGramText === "-") {
+        isGrammarTextCorrect = true;
+    }
+
+} else {
+
+    const normalizedUserGrammar =
+        normalizeGrammarVariants(userGramText);
+
+    const normalizedExpectedGrammar =
+        normalizeGrammarVariants(normalizedExpectedPureGrammar);
+
+    if (normalizedUserGrammar === normalizedExpectedGrammar) {
+        isGrammarTextCorrect = true;
+    }
+
+}
         const inputAns = document.getElementById("input-answer");
         const genderWrapper = document.getElementById("gender-checkbox-wrapper");
         const inputGramT = document.getElementById("input-grammar-text");
