@@ -142,6 +142,14 @@
     <button class="main-btn" disabled="" id="btn-start" onclick="startQuiz()">
      Trainer starten
     </button>
+<button
+    class="main-btn"
+    id="btn-flashcards"
+    onclick="startFlashcards()"
+    disabled
+    style="margin-top:10px; flex:none;">
+    Karteikarten
+</button>
 <div class="highscore-box" id="highscore-box" style="display: none;">
     <div class="highscore-title">
         🕒 Deine letzten 5 Runden (Verlauf):
@@ -276,10 +284,7 @@
       Willkommen im Latein Vokabeltrainer!
      </h2>
      <p>
-      Hier bekommst du alles rund um die Benutzung des Vokabeltrainers erklärt. Bei Fragen wende dich an den Urheber.
-     </p>
-     <p>
-     Der Vokabeltrainer erhält täglich/wöchentlich Updates!
+      Hier bekommst du alles rund um die Benutzung des Vokabeltrainers erklärt.
      </p>
      <h3>
       📚 Lektionen
@@ -365,6 +370,9 @@
      <p>
       Dort werden schwierige Vokabeln gesammelt, damit du sie gezielt wiederholen kannst.
      </p>
+     <p>
+     <b>Info:</b> Auch Vokabeln, die drei mal bei den Karteikarten nicht gewusst wurden, landen dort.
+     </p>
      <h3>
       🏆 Trophäen-Zimmer
      </h3>
@@ -382,6 +390,12 @@
      </h3>
      <p>
       Ab drei richtige Antworten hintereinander hast du einen Streak. Dieser wird in der Auswertung und im Verlauf angezeigt.
+     </p>
+     <h3>
+     📚 Karteikarten
+     </h3>
+     <p>
+     Bevor du dich im Trainer testest, kannst du die Vokabeln dir erstmal vorher einprägen, indem du dir eine oder mehrere Lektionen aussucht und auf den "Karteikarten" Button klickst. Dort kannst du die Vokabeln dann geziehlt üben und siehst auch, wie das Grammatikfeld ausgefüllt werden muss.
      </p>
      <h3>
       🌓 Design
@@ -417,7 +431,7 @@
       richtige Übersetzung ein.
      </p>
      <p>
-     Bei Worten wie "patet" schreibe vor das "dass" in der Übersetzung kein ","!
+     Schreibe GRUNDSÄTZLICH niemals ein Komma in deine Übersetzung, sondern lasse einfach ein Leerzeichen Platz frei!
      </p>
      <h3>
       🖋️ Grammatikinformationen
@@ -434,7 +448,7 @@
      <p>Trage bei Wörtern wie "eum" das Grammatikfeld so ein: <b>eos (sie (maskulin Plural))</b></p>
      <p>Trage bei Wörtern wie "ruinae" das Grammatikfeld so ein: <b>ruinarum Plural</b></p>
      <p>Trage bei Wörtern wie "navis" das Grammatikfeld so ein: <b>navis (Genitiv Plural: navium)</b></p>
-     <p>Trage bei Wörtern wie "ipse" das Grammatikfeld so ein: <b>ipsa, ipsum (Demonstrativpronomen)</b></p>
+     <p>Trage bei Wörtern wie "ipse" das Grammatikfeld so ein: <b>ipsa, ipsum Demonstrativpronomen</b></p>
      <p>Trage bei Wörtern wie "cuncti" das Grammatikfeld so ein: <b>cunctae, cuncta Plural</b></p>
      <p>Trage bei Wörtern wie "munus" das Grammatikfeld so ein: <b>munus (Nominativ/Akkusativ Plural: munera)</b></p>
      <p>Trage bei Wörtern wie "Gallus" das Grammatikfeld so ein: <b>Galli galla, gallum</b></p>
@@ -443,6 +457,7 @@
      <p>Trage bei Wörtern wie "quidam" das Grammatikfeld so ein: <b>quaedam, quoddam (Akkusativ Singular maskulin/feminin: quendam, quandam, Genitiv Plural: quorundam, quarundam)</b></p>
      <p>Trage bei Wörtern wie "praestare" das die dritte Form im Grammatikfeld mit einem "-" ein: <b>praesto, praestiti, -</b></p>
      <p>Trage bei Wörtern wie "magnus" in höheren Lektionen in das Grammatikfeld: <b>magna, magnum, magnus, maior, maximus</b></p>
+     <p>Bezieht sich ein Attribut auf nur ein Wort einer Aufzählung wie das "Plural" bei "se", dann schreibe es in Klammern. Bezieht sich ein Attribut auf alle Wörter (einer Aufzählung) oder auf das eine Wort, dann schreibe es ohne Klammer hinten dran.</p>
 
      <h3>
       🙂 Geschlechtsfeld
@@ -509,7 +524,107 @@
      </button>
     </div>
    </div>
-   <div class="screen card" id="quiz-screen">
+<div class="screen card" id="flashcard-screen">
+
+    <h1>Karteikarten</h1>
+
+<div id="flashcard-stats">
+    <span>✅ Gewusst: <span id="flashcard-known">0</span></span>
+
+    <span class="flashcard-separator">|</span>
+
+    <span>❌ Nicht gewusst: <span id="flashcard-unknown">0</span></span>
+
+    <span class="flashcard-separator">|</span>
+
+    <span>📚 Rest: <span id="flashcard-left">0</span></span>
+</div>
+
+    <div id="flashcard-container">
+
+        <!-- Normale Karte -->
+        <div id="flashcard" onclick="flipFlashcard()">
+
+            <div class="flashcard-inner">
+
+                <div class="flashcard-front">
+
+                    <div id="flashcard-lesson"></div>
+
+                    <div id="flashcard-question">---</div>
+
+                </div>
+
+                <div class="flashcard-back">
+
+                    <div id="flashcard-answer"></div>
+
+                    <div id="flashcard-grammar"></div>
+
+                    <div id="flashcard-mnemonic"></div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Abschlusskarte -->
+<div
+    id="flashcard-finish-card"
+    style="display:none;"
+    onclick="flipFinishCard()">
+
+    <div class="flashcard-inner">
+
+<div class="flashcard-front flashcard-finish-side">
+
+    <div>
+        Feliciter! Omnes schedas memoriae perfecisti.
+    </div>
+
+</div>
+
+<div class="flashcard-back flashcard-finish-side">
+
+    <div>
+        Glückwunsch! Du hast alle Karteikarten durchgearbeitet.
+    </div>
+
+</div>
+
+    </div>
+
+</div>
+    <div class="flashcard-buttons">
+
+        <button
+            id="flashcard-fail"
+            class="flashcard-red"
+            onclick="flashcardWrong()"
+            disabled>
+            ❌ Nicht gewusst
+        </button>
+
+        <button
+            id="flashcard-success"
+            class="flashcard-green"
+            onclick="flashcardCorrect()"
+            disabled>
+            ✅ Gewusst
+        </button>
+
+    </div>
+
+    <button
+        class="secondary-menu-btn"
+        style="margin-top:10px;"
+        onclick="closeFlashcards()">
+        Zurück
+    </button>
+
+</div>
+<div class="screen card" id="quiz-screen">
     <div class="exit-quiz-container">
      <button class="exit-quiz-btn" onclick="exitQuizEarly()">
       ✕ Quiz abbrechen
@@ -686,6 +801,13 @@
 
     let hintUsedThisQuestion = false;
     let jokerUsedThisQuestion = false;
+
+    let flashcardWords = [];
+    let flashcardIndex = 0;
+    let flashcardSolved = false;
+    let flashcardKnownCount = 0;
+    let flashcardUnknownCount = 0;
+    let flashcardFails = {};
 
     const levelHintPercentages = {
     1: 0.30,
@@ -911,6 +1033,24 @@ function toggleCaseCorrection() {
 
 
 
+function closeFlashcards() {
+
+bgMusic.pause();
+bgMusic.currentTime = 0;
+
+    document.getElementById("flashcard-screen").classList.remove("active");
+    document.getElementById("setup-screen").classList.add("active");
+
+    resetQuizApp();
+}
+
+
+
+
+
+
+
+
 
 
 
@@ -958,10 +1098,16 @@ function toggleCaseCorrection() {
 
 
 
-    function updateStartButton() {
-        const anyChecked = Array.from(document.querySelectorAll("#lessons-grid input")).some(cb => cb.checked);
-        document.getElementById("btn-start").disabled = !anyChecked;
-    }
+function updateStartButton() {
+
+    const anyChecked = Array.from(
+        document.querySelectorAll("#lessons-grid input")
+    ).some(cb => cb.checked);
+
+    document.getElementById("btn-start").disabled = !anyChecked;
+
+    document.getElementById("btn-flashcards").disabled = !anyChecked;
+}
 
 
 
@@ -1336,6 +1482,75 @@ function extractGendersArray(grammarString) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+function startFlashcards() {
+
+    if (musicEnabled) {
+        bgMusic.play().catch(() => {});
+    }
+
+flashcardFails = {};
+flashcardKnownCount = 0;
+flashcardUnknownCount = 0;
+
+document.getElementById("flashcard").style.display = "";
+
+document.querySelector(".flashcard-buttons").style.display = "flex";
+
+document.getElementById("flashcard-finish-card").style.display = "none";
+
+const checkedBoxes = document.querySelectorAll("#lessons-grid input:checked");
+const selectedLessons = Array.from(checkedBoxes).map(cb => parseInt(cb.value));
+
+flashcardWords = vocabData.filter(v =>
+    selectedLessons.includes(v.lektion)
+);
+
+flashcardWords = flashcardWords.sort(() => Math.random() - 0.5);
+
+    if (flashcardWords.length === 0) {
+        return;
+    }
+
+    flashcardIndex = 0;
+
+document.getElementById("setup-screen").classList.remove("active");
+document.getElementById("flashcard-screen").classList.add("active");
+
+    loadFlashcard();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+function updateFlashcardStats() {
+
+    document.getElementById("flashcard-known").textContent =
+        flashcardKnownCount;
+
+    document.getElementById("flashcard-unknown").textContent =
+        flashcardUnknownCount;
+
+    document.getElementById("flashcard-left").textContent =
+        flashcardWords.length - flashcardIndex;
+}
 
 
 
@@ -2113,7 +2328,7 @@ function normalizeGrammarVariants(text) {
         .replace(/ablativ/g, "abl.")
         .replace(/dativ/g, "dat.")
         .replace(/pronomen/g, "pron.")
-        .replace(/demonstrativ/g, "dem.")
+        .replace(/demonstrativpronomen/g, "dem.")
         .replace(/jemandem/g, "jdm.")
         .replace(/jemanden/g, "jdn.")
         .replace(/possessivpronomen/g, "poss.")
@@ -3051,6 +3266,197 @@ function unlockCheats() {
 function lockCheats() {
     localStorage.removeItem("latin_cheats_unlocked");
 }
+
+
+
+function loadFlashcard() {
+
+    let question;
+    let answer; 
+
+
+   const card = flashcardWords[flashcardIndex];
+
+document.getElementById("flashcard-lesson").textContent =
+    card.lektion === 0
+        ? "Salve"
+        : "Lektion " + card.lektion;
+
+    flashcardSolved = false;
+
+    document
+        .getElementById("flashcard")
+        .classList.remove("flipped");
+
+const grammarText =
+    card.grammar &&
+    card.grammar.toLowerCase().trim() !== "interjektion"
+        ? "🖋️ " + card.grammar
+        : "🖋️ Keine Grammatik";
+
+document.getElementById("flashcard-grammar").textContent = grammarText;
+
+document.getElementById("flashcard-mnemonic").textContent =
+    card.mnemonic || "";
+
+    document
+        .getElementById("flashcard-fail")
+        .disabled = true;
+
+    document
+        .getElementById("flashcard-success")
+        .disabled = true;
+
+
+    if (selectedMode === 1) {
+
+        question = card.latin;
+        answer = card.german;
+
+    } else if (selectedMode === 2) {
+
+        question = card.german;
+        answer = card.latin;
+
+    } else {
+
+        const randomDirection = Math.random() < 0.5;
+
+        if (randomDirection) {
+            question = card.latin;
+            answer = card.german;
+        } else {
+            question = card.german;
+            answer = card.latin;
+        }
+    }
+
+    document.getElementById("flashcard-question").textContent = question;
+    document.getElementById("flashcard-answer").textContent = answer;
+
+updateFlashcardStats();
+
+}
+
+
+
+function flipFlashcard() {
+
+    if (flashcardSolved) return;
+
+    document
+        .getElementById("flashcard")
+        .classList.add("flipped");
+
+    document
+        .getElementById("flashcard-fail")
+        .disabled = false;
+
+    document
+        .getElementById("flashcard-success")
+        .disabled = false;
+
+    flashcardSolved = true;
+}
+
+
+
+function nextFlashcard() {
+
+    const cardElement = document.getElementById("flashcard");
+
+    // Vorderseite sofort leeren
+    document.getElementById("flashcard-question").textContent = "";
+    document.getElementById("flashcard-lesson").textContent = "";
+
+    cardElement.classList.remove("flipped");
+
+    document.getElementById("flashcard-fail").disabled = true;
+    document.getElementById("flashcard-success").disabled = true;
+
+    setTimeout(() => {
+
+        flashcardIndex++;
+
+        if (flashcardIndex >= flashcardWords.length) {
+
+            updateFlashcardStats();
+
+            document.getElementById("flashcard").style.display = "none";
+
+            document.querySelector(".flashcard-buttons").style.display = "none";
+
+            document.getElementById("flashcard-finish-card").style.display = "flex";
+
+            return;
+        }
+
+        loadFlashcard();
+
+    }, 600);
+
+}
+
+
+
+function flashcardCorrect() {
+
+    const card = flashcardWords[flashcardIndex];
+    const key = card.id;
+
+    if (flashcardFails[key] && flashcardFails[key] > 0) {
+        flashcardUnknownCount--;
+        flashcardFails[key] = 0;
+    } else {
+        flashcardKnownCount++;
+    }
+
+    nextFlashcard();
+}
+
+function flashcardWrong() {
+
+    const card = flashcardWords[flashcardIndex];
+    const key = card.id;
+
+    if (!flashcardFails[key]) {
+        flashcardFails[key] = 1;
+        flashcardUnknownCount++;
+    } else {
+        flashcardFails[key]++;
+    }
+
+    if (flashcardFails[key] < 3) {
+
+        flashcardWords.splice(
+            Math.min(flashcardIndex + 5, flashcardWords.length),
+            0,
+            card
+        );
+    }
+else {
+
+    if (!wrongVocabRegistry.some(v => v.id === card.id)) {
+
+        wrongVocabRegistry.push(card);
+
+    }
+
+}
+
+    nextFlashcard();
+}
+
+
+
+function flipFinishCard() {
+
+    document
+        .getElementById("flashcard-finish-card")
+        .classList.toggle("flipped");
+
+}
+
   </script>
  </body>
 </html>
