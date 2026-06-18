@@ -473,6 +473,7 @@
     height: 250px;
     cursor: pointer;
     margin-bottom: 20px;
+    border-radius: 20px;
 }
 
 .flashcard-inner {
@@ -656,4 +657,36 @@
     word-break: break-word;
 
     font-size: clamp(16px, 2.5vw, 28px);
+}
+
+
+
+
+#flash-overlay {
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    z-index: 9999;
+
+}
+
+
+.flash-green {
+    box-shadow: 0 0 20px 5px rgba(0, 255, 0, 0.6);
+    transition: box-shadow 0.2s ease;
+}
+
+.flash-red {
+    box-shadow: 0 0 20px 5px rgba(255, 0, 0, 0.6);
+    transition: box-shadow 0.2s ease;
 }
