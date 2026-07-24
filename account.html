@@ -15,43 +15,50 @@
 
 
 <body>
+
+
 <script type="module" src="page-auth.js"></script>
+
 
 <div class="container">
 
 <div class="screen active card">
 
 
-<!-- Home Button links -->
+<!-- Home -->
 
 <button
-    class="icon-toggle-btn home-button"
-    onclick="window.location.href='trainer.html'"
-    title="Trainer">
-    🏛️
+class="icon-toggle-btn home-button"
+onclick="goTrainer()"
+title="Trainer">
+🏛️
 </button>
 
 
 
-<!-- Theme rechts -->
+<!-- Rechts -->
 
 <div class="top-controls">
 
-<button
-    class="icon-toggle-btn"
-    id="btn-mute"
-    onclick="openSoundMenu()"
-    title="Audio">
-    🔊
-</button>
 
 <button
-    id="themeButton"
-    class="icon-toggle-btn"
-    onclick="toggleTheme()"
-    title="Design wechseln">
-    🌗
+class="icon-toggle-btn"
+id="btn-mute"
+onclick="openSoundMenu()"
+title="Audio">
+🔊
 </button>
+
+
+
+<button
+id="themeButton"
+class="icon-toggle-btn"
+onclick="toggleTheme()"
+title="Design wechseln">
+🌗
+</button>
+
 
 </div>
 
@@ -66,6 +73,7 @@
 <div class="account-info">
 
 
+
 <h2>📧 E-Mail</h2>
 
 <p id="email">
@@ -76,20 +84,16 @@ Wird geladen...
 
 <h2>🔐 Passwort</h2>
 
-<p>
-********
-</p>
-
-
 <input
-    id="newPassword"
-    type="password"
-    placeholder="Neues Passwort">
+id="newPassword"
+type="password"
+placeholder="Neues Passwort">
 
 
 <button
-    class="main-btn"
-    id="changePasswordBtn">
+class="main-btn"
+id="changePasswordBtn"
+onclick="playSound('click')">
 🔑 Passwort ändern
 </button>
 
@@ -98,11 +102,12 @@ Wird geladen...
 
 <h2>☑ Anmeldung</h2>
 
+
 <label>
 
 <input
-    type="checkbox"
-    id="rememberMe">
+type="checkbox"
+id="rememberMe">
 
 7 Tage angemeldet bleiben
 
@@ -119,6 +124,7 @@ Wird geladen...
 
 
 
+
 <h2>👤 Rolle</h2>
 
 <p id="role">
@@ -128,17 +134,21 @@ Wird geladen...
 
 
 
+
 <button
-    class="main-btn"
-    id="logoutBtn">
+class="main-btn"
+id="logoutBtn"
+onclick="playSound('click')">
 🚪 Logout
 </button>
 
 
 
+
 <button
-    class="main-btn delete-btn"
-    id="deleteBtn">
+class="main-btn delete-btn"
+id="deleteBtn"
+onclick="playSound('click')">
 🗑️ Account löschen
 </button>
 
@@ -150,6 +160,8 @@ Wird geladen...
 </div>
 
 </div>
+
+
 
 
 
@@ -168,7 +180,6 @@ deleteDoc
 } from "./firebase.js";
 
 
-
 import {
 
 onAuthStateChanged,
@@ -181,9 +192,7 @@ deleteUser
 
 
 
-
-let currentUser = null;
-
+let currentUser;
 
 
 
@@ -193,6 +202,7 @@ onAuthStateChanged(auth, async(user)=>{
 if(!user){
 
 window.location.href="index.html";
+
 return;
 
 }
@@ -202,39 +212,40 @@ currentUser=user;
 
 
 
-document.getElementById("email").textContent =
-user.email;
+document
+.getElementById("email")
+.textContent=user.email;
 
 
 
-const userDoc =
+const snap =
 await getDoc(
 doc(db,"users",user.uid)
 );
 
 
 
-if(userDoc.exists()){
+if(snap.exists()){
 
 
-const data=userDoc.data();
+const data=snap.data();
+
+
+document
+.getElementById("role")
+.textContent=data.role;
 
 
 
-document.getElementById("role").textContent =
-data.role;
-
-
-
-document.getElementById("approved").textContent =
-
+document
+.getElementById("approved")
+.textContent =
 data.approved
 ? "✅ Freigeschaltet"
 : "❌ Nicht freigeschaltet";
 
 
 }
-
 
 
 });
@@ -244,11 +255,13 @@ data.approved
 
 
 
+
 // Passwort ändern
+
 
 document
 .getElementById("changePasswordBtn")
-.addEventListener("click", async()=>{
+.addEventListener("click",async()=>{
 
 
 const password =
@@ -258,7 +271,7 @@ document.getElementById("newPassword").value;
 
 if(password.length < 6){
 
-alert("Das Passwort muss mindestens 6 Zeichen haben.");
+alert("Mindestens 6 Zeichen!");
 return;
 
 }
@@ -274,53 +287,14 @@ password
 );
 
 
-alert("Passwort erfolgreich geändert.");
-
+alert("Passwort geändert");
 
 
 }
-
 
 catch(error){
 
-
 alert(error.message);
-
-
-}
-
-
-
-});
-
-
-
-
-
-
-// 7 Tage angemeldet bleiben
-
-document
-.getElementById("rememberMe")
-.addEventListener("change",(e)=>{
-
-
-if(e.target.checked){
-
-
-localStorage.setItem(
-"rememberMe",
-"true"
-);
-
-
-}else{
-
-
-localStorage.removeItem(
-"rememberMe"
-);
-
 
 }
 
@@ -334,6 +308,7 @@ localStorage.removeItem(
 
 
 // Logout
+
 
 document
 .getElementById("logoutBtn")
@@ -353,21 +328,17 @@ window.location.href="index.html";
 
 
 
-// Account löschen
+
+// Löschen
+
 
 document
 .getElementById("deleteBtn")
 .addEventListener("click",async()=>{
 
 
-const confirmDelete =
-confirm(
-"Willst du deinen Account wirklich löschen?"
-);
-
-
-
-if(!confirmDelete) return;
+if(!confirm("Account wirklich löschen?"))
+return;
 
 
 
@@ -384,23 +355,14 @@ await deleteUser(currentUser);
 
 
 
-alert("Account gelöscht.");
-
 window.location.href="index.html";
 
 
 }
 
-
 catch(error){
 
-
-alert(
-"Fehler beim Löschen: "
-+
-error.message
-);
-
+alert(error.message);
 
 }
 
@@ -413,63 +375,99 @@ error.message
 </script>
 
 
-let soundEffectsEnabled = true;
+
+
+
+<script>
+
+
+function goTrainer(){
+
+playSound("click");
+
+
+setTimeout(()=>{
+
+window.location.href="trainer.html";
+
+},200);
+
+
+}
+
+
+
+
+
+
+
+let soundEffectsEnabled=true;
+
 
 
 function playSound(type){
 
-    if(!soundEffectsEnabled) return;
 
-    try{
-
-        const audioCtx = new AudioContext();
-
-        const osc = audioCtx.createOscillator();
-
-        const gainNode = audioCtx.createGain();
+if(type!=="click") return;
 
 
-        osc.connect(gainNode);
 
-        gainNode.connect(audioCtx.destination);
-
-
-        if(type==="click"){
-
-            osc.type="sine";
-
-            osc.frequency.setValueAtTime(
-                800,
-                audioCtx.currentTime
-            );
+const audioCtx =
+new AudioContext();
 
 
-            gainNode.gain.setValueAtTime(
-                0.12,
-                audioCtx.currentTime
-            );
+
+const osc =
+audioCtx.createOscillator();
 
 
-            gainNode.gain.exponentialRampToValueAtTime(
-                0.01,
-                audioCtx.currentTime+0.2
-            );
+
+const gain =
+audioCtx.createGain();
 
 
-            osc.start();
 
-            osc.stop(
-                audioCtx.currentTime+0.2
-            );
+osc.connect(gain);
 
-        }
+gain.connect(audioCtx.destination);
 
 
-    }catch(e){}
+
+osc.frequency.value=800;
+
+gain.gain.value=0.12;
+
+
+gain.gain.exponentialRampToValueAtTime(
+0.01,
+audioCtx.currentTime+0.2
+);
+
+
+osc.start();
+
+osc.stop(
+audioCtx.currentTime+0.2
+);
+
+
 
 }
 
-<script>
+
+
+
+
+function openSoundMenu(){
+
+alert("Soundmenü kommt als nächstes");
+
+}
+
+
+
+
+
 
 
 function toggleTheme(){
@@ -506,13 +504,13 @@ button.textContent="🌓";
 }
 
 
-
 }
 
 
 
 
-window.onload=function(){
+
+window.onload=()=>{
 
 
 const button =
@@ -532,6 +530,8 @@ button.textContent="🌓";
 
 
 };
+
+
 
 </script>
 
