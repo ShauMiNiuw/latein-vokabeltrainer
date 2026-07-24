@@ -690,3 +690,44 @@
     box-shadow: 0 0 20px 5px rgba(255, 0, 0, 0.6);
     transition: box-shadow 0.2s ease;
 }
+
+
+.account-button-container {
+
+    width:100%;
+
+    display:flex;
+
+    justify-content:center;
+
+    margin-bottom:15px;
+
+}
+
+
+.account-button {
+
+    padding:10px 25px;
+
+    border-radius:20px;
+
+    border:none;
+
+    font-size:16px;
+
+    cursor:pointer;
+
+    background:var(--button-color);
+
+    color:var(--button-text);
+
+    transition:0.2s;
+
+}
+
+
+.account-button:hover {
+
+    transform:scale(1.05);
+
+}
