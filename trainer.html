@@ -37,12 +37,14 @@
         🔊
     </button>
 
-    <button
-        class="icon-toggle-btn"
-        onclick="toggleTheme()"
-        title="Design wechseln">
-        🌓
-    </button>
+<button
+    id="themeButton"
+    class="icon-toggle-btn"
+    onclick="toggleTheme()"
+    title="Design wechseln">
+    🌗
+</button>
+
 </div>
     <h1>
      🏛️ Latein Vokabeltrainer 🏛️
@@ -1007,16 +1009,29 @@ function toggleCaseCorrection() {
 
 
 
-    function toggleTheme() {
-        if (document.documentElement.getAttribute("data-theme") === "dark") {
-            document.documentElement.removeAttribute("data-theme");
-            localStorage.setItem("theme", "light");
-        } else {
-            document.documentElement.setAttribute("data-theme", "dark");
-            localStorage.setItem("theme", "dark");
-        }
+function toggleTheme() {
+
+    const button = document.querySelector(".icon-toggle-btn");
+
+    if (document.documentElement.getAttribute("data-theme") === "dark") {
+
+        // Wechsel zu Lightmode
+        document.documentElement.removeAttribute("data-theme");
+        localStorage.setItem("theme", "light");
+
+        button.textContent = "🌗";
+
+    } else {
+
+        // Wechsel zu Darkmode
+        document.documentElement.setAttribute("data-theme", "dark");
+        localStorage.setItem("theme", "dark");
+
+        button.textContent = "🌓";
+
     }
 
+}
 
 
 
