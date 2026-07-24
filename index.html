@@ -1,110 +1,154 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Latein Vokabeltrainer</title>
 
     <link rel="stylesheet" href="index.css">
+
 </head>
+
 
 <body>
 
-    <!-- LOGIN SEITE -->
-    <div id="loginPage">
 
-        <div class="topbar">
-            <button id="themeButton">🌙</button>
-        </div>
+<div class="topbar">
 
-        <div class="loginBox">
+    <button
+        id="themeButton"
+        class="icon-toggle-btn"
+        onclick="toggleTheme()"
+        title="Design wechseln">
+        🌗
+    </button>
 
-            <h1>Latein Vokabeltrainer</h1>
-
-            <input 
-                id="username"
-                type="text"
-                placeholder="Benutzername"
-            >
-
-            <input 
-                id="password"
-                type="password"
-                placeholder="Passwort"
-            >
-
-            <button id="loginButton">
-                Anmelden
-            </button>
-
-            <p id="loginMessage"></p>
-
-        </div>
-
-    </div>
+</div>
 
 
 
-    <!-- TRAINER (erst nach Login sichtbar) -->
-    <div id="trainerPage" style="display:none;">
-
-        <div class="topbar">
-            <button id="themeButtonTrainer">🌙</button>
-        </div>
+<div class="login-container">
 
 
-        <div class="trainer">
+    <h1>Latein Vokabeltrainer</h1>
 
-            <h1>Latein Vokabeltrainer</h1>
 
-            <div id="vocabulary">
-                <!-- Hier kommt dein bestehender Trainer rein -->
-            </div>
+    <div class="login-box">
 
-        </div>
+
+        <input
+            id="email"
+            type="email"
+            placeholder="E-Mail">
+
+
+        <input
+            id="password"
+            type="password"
+            placeholder="Passwort">
+
+
+        <button id="loginBtn">
+            Anmelden
+        </button>
+
+
+        <button id="registerBtn">
+            Registrieren
+        </button>
+
+
+        <p id="message"></p>
+
 
     </div>
+
+
+</div>
+
+
+
+<script type="module" src="auth.js"></script>
 
 
 
 <script>
 
-let darkMode = false;
+
+function toggleTheme() {
 
 
-// Dark / Light Mode
-document.getElementById("themeButton").onclick = function(){
-
-    darkMode = !darkMode;
-
-    document.body.classList.toggle("dark");
-
-    this.textContent = darkMode ? "☀️" : "🌙";
-
-};
+    const button = document.getElementById("themeButton");
 
 
-// Test Login (später Supabase)
-document.getElementById("loginButton").onclick = function(){
-
-    let username = document.getElementById("username").value;
-    let password = document.getElementById("password").value;
+    if(document.documentElement.getAttribute("data-theme") === "dark") {
 
 
-    if(username === "admin" && password === "1234"){
+        document.documentElement.removeAttribute("data-theme");
 
-        document.getElementById("loginPage").style.display="none";
-        document.getElementById("trainerPage").style.display="block";
+        localStorage.setItem(
+            "theme",
+            "light"
+        );
+
+
+        button.textContent = "🌗";
+
+
+    } else {
+
+
+        document.documentElement.setAttribute(
+            "data-theme",
+            "dark"
+        );
+
+
+        localStorage.setItem(
+            "theme",
+            "dark"
+        );
+
+
+        button.textContent = "🌓";
+
 
     }
 
-    else{
+}
 
-        document.getElementById("loginMessage").textContent =
-        "Falscher Benutzername oder falsches Passwort";
+
+
+window.onload = function(){
+
+
+    const button =
+    document.getElementById("themeButton");
+
+
+    if(localStorage.getItem("theme") === "dark"){
+
+
+        document.documentElement.setAttribute(
+            "data-theme",
+            "dark"
+        );
+
+
+        button.textContent="🌓";
+
+
+    } else {
+
+
+        button.textContent="🌗";
+
 
     }
+
 
 };
 
@@ -113,4 +157,5 @@ document.getElementById("loginButton").onclick = function(){
 
 
 </body>
+
 </html>

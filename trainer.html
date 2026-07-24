@@ -930,58 +930,112 @@ else if (type === 'achievement') {
 } catch(e) {}
 }
 
-    window.onload = function() {
+window.onload = function() {
 
+    // Theme laden
     if (localStorage.getItem("theme") === "dark") {
+
         document.documentElement.setAttribute("data-theme", "dark");
+
+    } else {
+
+        document.documentElement.removeAttribute("data-theme");
+
     }
 
+    updateThemeButton();
+
+
+    // Erweiterter Modus
     const lockBtn = document.getElementById("advanced-mode-btn");
     const terminalBtn = document.getElementById("terminal-btn");
 
     if (advancedModeEnabled) {
+
         lockBtn.textContent = "🔓";
         lockBtn.title = "Deaktiviere erweiterten Modus";
         terminalBtn.style.display = "block";
+
     } else {
+
         lockBtn.textContent = "🔐";
         lockBtn.title = "Aktiviere erweiterten Modus";
         terminalBtn.style.display = "none";
+
     }
 
+
+    // Lektionen erstellen
     const grid = document.getElementById("lessons-grid");
     grid.innerHTML = "";
 
     for (let i = 0; i <= 34; i++) {
+
         const labelText = i === 0 ? "Salve" : `Lektion ${i}`;
+
         grid.innerHTML += `
             <label class="checkbox-label">
                 <input type="checkbox" value="${i}" onchange="playSound('click'); updateStartButton()">
                 ${labelText}
             </label>
         `;
+
     }
-document.querySelectorAll("button").forEach(btn => {
-    btn.addEventListener("click", () => {
-        playSound("click");
+
+
+    // Klick-Sounds
+    document.querySelectorAll("button").forEach(btn => {
+
+        btn.addEventListener("click", () => {
+
+            playSound("click");
+
+        });
+
     });
-});
-        
-        document.getElementById("input-answer").addEventListener("keyup", function(e) { 
-            if (e.key === "Enter" && !document.getElementById("btn-check").disabled) checkAnswer(); 
-        });
-        document.getElementById("input-grammar-text").addEventListener("keyup", function(e) { 
-            if (e.key === "Enter" && !document.getElementById("btn-check").disabled) checkAnswer(); 
-        });
 
-        document.getElementById("terminal-input-field").addEventListener("keyup", function(e) {
-            if (e.key === "Enter") processTerminalCommand();
-        });
 
-        updateVaultBadge();
-        renderHighscores();
-    };
+    // Enter bei Vokabel-Eingabe
+    document.getElementById("input-answer").addEventListener("keyup", function(e) {
 
+        if (e.key === "Enter" && !document.getElementById("btn-check").disabled) {
+
+            checkAnswer();
+
+        }
+
+    });
+
+
+    // Enter bei Grammatik-Eingabe
+    document.getElementById("input-grammar-text").addEventListener("keyup", function(e) {
+
+        if (e.key === "Enter" && !document.getElementById("btn-check").disabled) {
+
+            checkAnswer();
+
+        }
+
+    });
+
+
+    // Enter im Terminal
+    document.getElementById("terminal-input-field").addEventListener("keyup", function(e) {
+
+        if (e.key === "Enter") {
+
+            processTerminalCommand();
+
+        }
+
+    });
+
+
+    // Start-Daten laden
+    updateVaultBadge();
+    renderHighscores();
+
+};
             
 
 
@@ -1008,26 +1062,37 @@ function toggleCaseCorrection() {
 
 
 
-
 function toggleTheme() {
-
-    const button = document.querySelector(".icon-toggle-btn");
 
     if (document.documentElement.getAttribute("data-theme") === "dark") {
 
-        // Wechsel zu Lightmode
         document.documentElement.removeAttribute("data-theme");
         localStorage.setItem("theme", "light");
 
-        button.textContent = "🌗";
-
     } else {
 
-        // Wechsel zu Darkmode
         document.documentElement.setAttribute("data-theme", "dark");
         localStorage.setItem("theme", "dark");
 
+    }
+
+    updateThemeButton();
+
+}
+
+function updateThemeButton() {
+
+    const button = document.getElementById("themeButton");
+
+    if (!button) return;
+
+    if (document.documentElement.getAttribute("data-theme") === "dark") {
+
         button.textContent = "🌓";
+
+    } else {
+
+        button.textContent = "🌗";
 
     }
 
