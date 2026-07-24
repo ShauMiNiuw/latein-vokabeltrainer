@@ -692,42 +692,14 @@
 }
 
 
-.account-button-container {
-
-    width:100%;
-
-    display:flex;
-
-    justify-content:center;
-
-    margin-bottom:15px;
-
-}
-
-
 .account-button {
 
-    padding:10px 25px;
+    position: absolute;
 
-    border-radius:20px;
+    top: 15px;
 
-    border:none;
+    left: 50%;
 
-    font-size:16px;
-
-    cursor:pointer;
-
-    background:var(--button-color);
-
-    color:var(--button-text);
-
-    transition:0.2s;
-
-}
-
-
-.account-button:hover {
-
-    transform:scale(1.05);
+    transform: translateX(-50%);
 
 }
