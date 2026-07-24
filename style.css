@@ -692,14 +692,16 @@
 }
 
 
-.account-button {
 
-    position: absolute;
 
-    top: 15px;
+.account-button-container {
 
-    left: 50%;
+    width: 100%;
 
-    transform: translateX(-50%);
+    display: flex;
+
+    justify-content: center;
+
+    margin-bottom: 10px;
 
 }
