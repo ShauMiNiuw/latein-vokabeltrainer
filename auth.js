@@ -181,13 +181,11 @@ async function login(){
 
 
 
-        document.getElementById("message").textContent =
-        "Login erfolgreich!";
+document.getElementById("message").textContent =
+"Login erfolgreich!";
 
 
-
-        // HIER später Trainer öffnen
-
+window.location.href = "trainer.html";
 
 
     }
