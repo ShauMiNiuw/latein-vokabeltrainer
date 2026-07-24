@@ -694,14 +694,13 @@
 
 
 
-.account-button-container {
-
-    width: 100%;
-
+.account-control {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
-
-    justify-content: center;
-
+    z-index: 10;
 }
 
 .trainer-title {
