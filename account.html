@@ -9,7 +9,6 @@
 <title>Account - Latein Vokabeltrainer</title>
 
 <link rel="stylesheet" href="style.css">
-
 <link rel="icon" href="icon.png" type="image/png">
 
 </head>
@@ -20,157 +19,308 @@
 
 <div class="container">
 
-
-    <div class="screen active card">
-
-
-        <!-- Top Buttons -->
-
-        <div class="top-controls">
-
-            <button
-                class="icon-toggle-btn"
-                onclick="window.location.href='trainer.html'"
-                title="Zurück zum Trainer">
-                🏛️
-            </button>
+<div class="screen active card">
 
 
-            <button
-                id="themeButton"
-                class="icon-toggle-btn"
-                onclick="toggleTheme()"
-                title="Design wechseln">
-                🌗
-            </button>
+<!-- Home Button links -->
 
-        </div>
+<button
+    class="icon-toggle-btn"
+    onclick="window.location.href='trainer.html'"
+    title="Zum Trainer">
+    🏛️
+</button>
 
 
 
-        <h1>
-            👤 Account
-        </h1>
+<!-- Theme rechts -->
 
+<div class="top-controls">
 
-
-        <div class="account-info">
-
-
-            <h2>📧 E-Mail</h2>
-
-            <p id="email">
-                Wird geladen...
-            </p>
-
-
-
-            <h2>🔐 Rolle</h2>
-
-            <p id="role">
-                Wird geladen...
-            </p>
-
-
-
-            <h2>✅ Status</h2>
-
-            <p id="approved">
-                Wird geladen...
-            </p>
-
-
-
-            <button
-                class="main-btn"
-                id="logoutBtn">
-                🚪 Logout
-            </button>
-
-
-        </div>
-
-
-    </div>
-
+<button
+    id="themeButton"
+    class="icon-toggle-btn"
+    onclick="toggleTheme()"
+    title="Design wechseln">
+    🌗
+</button>
 
 </div>
 
 
 
+<h1>
+👤 Account
+</h1>
+
+
+
+<div class="account-info">
+
+
+<h2>📧 E-Mail</h2>
+
+<p id="email">
+Wird geladen...
+</p>
+
+
+
+<h2>🔐 Passwort</h2>
+
+<p>
+********
+</p>
+
+
+<input
+    id="newPassword"
+    type="password"
+    placeholder="Neues Passwort">
+
+
+<button
+    class="main-btn"
+    id="changePasswordBtn">
+🔑 Passwort ändern
+</button>
+
+
+
+
+<h2>☑ Anmeldung</h2>
+
+<label>
+
+<input
+    type="checkbox"
+    id="rememberMe">
+
+7 Tage angemeldet bleiben
+
+</label>
+
+
+
+
+<h2>✅ Status</h2>
+
+<p id="approved">
+Wird geladen...
+</p>
+
+
+
+<h2>👤 Rolle</h2>
+
+<p id="role">
+Wird geladen...
+</p>
+
+
+
+
+<button
+    class="main-btn"
+    id="logoutBtn">
+🚪 Logout
+</button>
+
+
+
+<button
+    class="main-btn delete-btn"
+    id="deleteBtn">
+🗑️ Account löschen
+</button>
+
+
+
+</div>
+
+
+</div>
+
+</div>
+
+
+
+
 <script type="module">
+
 
 import {
 
-    auth,
-    db,
-    doc,
-    getDoc
+auth,
+db,
+doc,
+getDoc,
+deleteDoc
 
 } from "./firebase.js";
 
 
+
 import {
 
-    onAuthStateChanged,
-    signOut
+onAuthStateChanged,
+signOut,
+updatePassword,
+deleteUser
 
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 
 
 
-// Nutzer laden
 
-onAuthStateChanged(auth, async (user)=>{
-
-
-    if(!user){
-
-        window.location.href="index.html";
-        return;
-
-    }
+let currentUser = null;
 
 
 
-    document.getElementById("email").textContent =
-    user.email;
+
+onAuthStateChanged(auth, async(user)=>{
+
+
+if(!user){
+
+window.location.href="index.html";
+return;
+
+}
+
+
+currentUser=user;
 
 
 
-    const userDoc =
-    await getDoc(
-        doc(db,"users",user.uid)
-    );
+document.getElementById("email").textContent =
+user.email;
 
 
 
-    if(userDoc.exists()){
-
-
-        const data =
-        userDoc.data();
-
-
-
-        document.getElementById("role").textContent =
-        data.role;
+const userDoc =
+await getDoc(
+doc(db,"users",user.uid)
+);
 
 
 
-        document.getElementById("approved").textContent =
-
-        data.approved
-        ? "✅ Freigeschaltet"
-        : "❌ Nicht freigeschaltet";
+if(userDoc.exists()){
 
 
-    }
+const data=userDoc.data();
+
+
+
+document.getElementById("role").textContent =
+data.role;
+
+
+
+document.getElementById("approved").textContent =
+
+data.approved
+? "✅ Freigeschaltet"
+: "❌ Nicht freigeschaltet";
+
+
+}
 
 
 
 });
+
+
+
+
+
+
+// Passwort ändern
+
+document
+.getElementById("changePasswordBtn")
+.addEventListener("click", async()=>{
+
+
+const password =
+document.getElementById("newPassword").value;
+
+
+
+if(password.length < 6){
+
+alert("Das Passwort muss mindestens 6 Zeichen haben.");
+return;
+
+}
+
+
+
+try{
+
+
+await updatePassword(
+currentUser,
+password
+);
+
+
+alert("Passwort erfolgreich geändert.");
+
+
+
+}
+
+
+catch(error){
+
+
+alert(error.message);
+
+
+}
+
+
+
+});
+
+
+
+
+
+
+// 7 Tage angemeldet bleiben
+
+document
+.getElementById("rememberMe")
+.addEventListener("change",(e)=>{
+
+
+if(e.target.checked){
+
+
+localStorage.setItem(
+"rememberMe",
+"true"
+);
+
+
+}else{
+
+
+localStorage.removeItem(
+"rememberMe"
+);
+
+
+}
+
+
+
+});
+
+
 
 
 
@@ -179,13 +329,73 @@ onAuthStateChanged(auth, async (user)=>{
 
 document
 .getElementById("logoutBtn")
-.addEventListener("click", async ()=>{
+.addEventListener("click",async()=>{
 
 
-    await signOut(auth);
+await signOut(auth);
 
 
-    window.location.href="index.html";
+window.location.href="index.html";
+
+
+});
+
+
+
+
+
+
+// Account löschen
+
+document
+.getElementById("deleteBtn")
+.addEventListener("click",async()=>{
+
+
+const confirmDelete =
+confirm(
+"Willst du deinen Account wirklich löschen?"
+);
+
+
+
+if(!confirmDelete) return;
+
+
+
+try{
+
+
+await deleteDoc(
+doc(db,"users",currentUser.uid)
+);
+
+
+
+await deleteUser(currentUser);
+
+
+
+alert("Account gelöscht.");
+
+window.location.href="index.html";
+
+
+}
+
+
+catch(error){
+
+
+alert(
+"Fehler beim Löschen: "
++
+error.message
+);
+
+
+}
+
 
 
 });
@@ -196,7 +406,12 @@ document
 
 
 
+
+
 <script type="module" src="page-auth.js"></script>
+
+
+
 
 
 <script>
@@ -205,60 +420,66 @@ document
 function toggleTheme(){
 
 
-    const button =
-    document.getElementById("themeButton");
+const button =
+document.getElementById("themeButton");
 
 
 
-    if(document.documentElement.getAttribute("data-theme")==="dark"){
+if(
+document.documentElement.getAttribute("data-theme")
+==="dark"
+){
 
 
-        document.documentElement.removeAttribute("data-theme");
+document.documentElement.removeAttribute("data-theme");
 
-        localStorage.setItem("theme","light");
+localStorage.setItem("theme","light");
 
-        button.textContent="🌗";
-
-
-    } else {
+button.textContent="🌗";
 
 
-        document.documentElement.setAttribute("data-theme","dark");
-
-        localStorage.setItem("theme","dark");
-
-        button.textContent="🌓";
+}else{
 
 
-    }
+document.documentElement.setAttribute("data-theme","dark");
+
+localStorage.setItem("theme","dark");
+
+button.textContent="🌓";
 
 
 }
 
 
 
+}
+
+
+
+
 window.onload=function(){
 
 
-    const button =
-    document.getElementById("themeButton");
+const button =
+document.getElementById("themeButton");
 
 
 
-    if(localStorage.getItem("theme")==="dark"){
+if(localStorage.getItem("theme")==="dark"){
 
 
-        document.documentElement.setAttribute("data-theme","dark");
+document.documentElement.setAttribute("data-theme","dark");
 
-        button.textContent="🌓";
+button.textContent="🌓";
 
 
-    }
+}
 
 
 };
 
 </script>
+
 
 
 </body>
