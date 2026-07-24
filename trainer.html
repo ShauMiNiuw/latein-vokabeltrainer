@@ -49,12 +49,12 @@
 
 <div class="account-button-container">
 
-    <button
-        class="icon-toggle-btn"
-        onclick="window.location.href='account.html'"
-        title="Account">
-        👤
-    </button>
+<button
+    class="icon-toggle-btn"
+    onclick="openAccount()"
+    title="Account">
+    👤
+</button>
 
 </div>
 
@@ -3708,6 +3708,18 @@ function animateFlashcard(result) {
     }, 300);
 }
 
+
+function openAccount() {
+
+    playSound("click");
+
+    setTimeout(() => {
+
+        window.location.href = "account.html";
+
+    }, 150);
+
+}
 
  </script>
 <script type="module" src="trainer-auth.js"></script>
