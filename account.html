@@ -20,12 +20,13 @@
 <script type="module" src="page-auth.js"></script>
 
 
+
 <div class="container">
 
 <div class="screen active card">
 
 
-<!-- Home -->
+<!-- Home Button -->
 
 <button
 class="icon-toggle-btn home-button"
@@ -36,7 +37,8 @@ title="Trainer">
 
 
 
-<!-- Rechts -->
+
+<!-- Rechte Buttons -->
 
 <div class="top-controls">
 
@@ -44,7 +46,7 @@ title="Trainer">
 <button
 class="icon-toggle-btn"
 id="btn-mute"
-onclick="openSoundMenu()"
+onclick="openSoundMenu(); playSound('click')"
 title="Audio">
 🔊
 </button>
@@ -54,7 +56,7 @@ title="Audio">
 <button
 id="themeButton"
 class="icon-toggle-btn"
-onclick="toggleTheme()"
+onclick="toggleTheme(); playSound('click')"
 title="Design wechseln">
 🌗
 </button>
@@ -64,9 +66,13 @@ title="Design wechseln">
 
 
 
+
+
 <h1>
 👤 Account
 </h1>
+
+
 
 
 
@@ -82,7 +88,9 @@ Wird geladen...
 
 
 
+
 <h2>🔐 Passwort</h2>
+
 
 <input
 id="newPassword"
@@ -90,12 +98,13 @@ type="password"
 placeholder="Neues Passwort">
 
 
+
 <button
 class="main-btn"
-id="changePasswordBtn"
-onclick="playSound('click')">
+id="changePasswordBtn">
 🔑 Passwort ändern
 </button>
+
 
 
 
@@ -116,11 +125,13 @@ id="rememberMe">
 
 
 
+
 <h2>✅ Status</h2>
 
 <p id="approved">
 Wird geladen...
 </p>
+
 
 
 
@@ -137,8 +148,7 @@ Wird geladen...
 
 <button
 class="main-btn"
-id="logoutBtn"
-onclick="playSound('click')">
+id="logoutBtn">
 🚪 Logout
 </button>
 
@@ -147,24 +157,26 @@ onclick="playSound('click')">
 
 <button
 class="main-btn delete-btn"
-id="deleteBtn"
-onclick="playSound('click')">
+id="deleteBtn">
 🗑️ Account löschen
 </button>
 
 
 
-</div>
-
-
-</div>
 
 </div>
 
 
 
+</div>
+
+</div>
 
 
+
+
+
+<!-- Firebase -->
 
 <script type="module">
 
@@ -180,6 +192,7 @@ deleteDoc
 } from "./firebase.js";
 
 
+
 import {
 
 onAuthStateChanged,
@@ -192,7 +205,9 @@ deleteUser
 
 
 
-let currentUser;
+
+let currentUser = null;
+
 
 
 
@@ -202,50 +217,50 @@ onAuthStateChanged(auth, async(user)=>{
 if(!user){
 
 window.location.href="index.html";
-
 return;
 
 }
+
 
 
 currentUser=user;
 
 
 
-document
-.getElementById("email")
-.textContent=user.email;
+document.getElementById("email").textContent =
+user.email;
 
 
 
-const snap =
+const userDoc =
 await getDoc(
 doc(db,"users",user.uid)
 );
 
 
 
-if(snap.exists()){
+if(userDoc.exists()){
 
 
-const data=snap.data();
-
-
-document
-.getElementById("role")
-.textContent=data.role;
+const data=userDoc.data();
 
 
 
-document
-.getElementById("approved")
-.textContent =
+document.getElementById("role").textContent =
+data.role;
+
+
+
+document.getElementById("approved").textContent =
+
 data.approved
 ? "✅ Freigeschaltet"
 : "❌ Nicht freigeschaltet";
 
 
+
 }
+
 
 
 });
@@ -271,7 +286,8 @@ document.getElementById("newPassword").value;
 
 if(password.length < 6){
 
-alert("Mindestens 6 Zeichen!");
+alert("Passwort muss mindestens 6 Zeichen haben");
+
 return;
 
 }
@@ -299,8 +315,8 @@ alert(error.message);
 }
 
 
-
 });
+
 
 
 
@@ -313,6 +329,9 @@ alert(error.message);
 document
 .getElementById("logoutBtn")
 .addEventListener("click",async()=>{
+
+
+playSound("click");
 
 
 await signOut(auth);
@@ -329,7 +348,7 @@ window.location.href="index.html";
 
 
 
-// Löschen
+// Account löschen
 
 
 document
@@ -360,12 +379,12 @@ window.location.href="index.html";
 
 }
 
+
 catch(error){
 
 alert(error.message);
 
 }
-
 
 
 });
@@ -378,81 +397,88 @@ alert(error.message);
 
 
 
+
 <script>
 
 
-function goTrainer(){
-
-playSound("click");
-
-
-setTimeout(()=>{
-
-window.location.href="trainer.html";
-
-},200);
-
-
-}
+let soundEffectsEnabled = true;
 
 
 
+let audioCtx =
+new (window.AudioContext ||
+window.webkitAudioContext)();
 
-
-
-
-let soundEffectsEnabled=true;
 
 
 
 function playSound(type){
 
 
-if(type!=="click") return;
+if(!soundEffectsEnabled)
+return;
 
 
 
-const audioCtx =
-new AudioContext();
-
+try{
 
 
 const osc =
 audioCtx.createOscillator();
 
 
-
-const gain =
+const gainNode =
 audioCtx.createGain();
 
 
 
-osc.connect(gain);
+osc.connect(gainNode);
 
-gain.connect(audioCtx.destination);
-
-
-
-osc.frequency.value=800;
-
-gain.gain.value=0.12;
+gainNode.connect(audioCtx.destination);
 
 
-gain.gain.exponentialRampToValueAtTime(
+
+if(type==="click"){
+
+
+osc.type="sine";
+
+osc.frequency.setValueAtTime(
+800,
+audioCtx.currentTime
+);
+
+
+gainNode.gain.setValueAtTime(
+0.12,
+audioCtx.currentTime
+);
+
+
+gainNode.gain.exponentialRampToValueAtTime(
 0.01,
-audioCtx.currentTime+0.2
+audioCtx.currentTime+0.08
 );
 
 
 osc.start();
 
 osc.stop(
-audioCtx.currentTime+0.2
+audioCtx.currentTime+0.08
 );
+
+
+}
+
+
+}
+
+catch(e){}
 
 
 
 }
+
 
 
 
@@ -460,7 +486,18 @@ audioCtx.currentTime+0.2
 
 function openSoundMenu(){
 
-alert("Soundmenü kommt als nächstes");
+const menu =
+document.getElementById("sound-menu");
+
+
+if(menu){
+
+menu.style.display =
+menu.style.display==="none"
+?"block"
+:"none";
+
+}
 
 }
 
@@ -468,14 +505,7 @@ alert("Soundmenü kommt als nächstes");
 
 
 
-
-
 function toggleTheme(){
-
-
-const button =
-document.getElementById("themeButton");
-
 
 
 if(
@@ -488,20 +518,73 @@ document.documentElement.removeAttribute("data-theme");
 
 localStorage.setItem("theme","light");
 
-button.textContent="🌗";
 
+}
 
-}else{
+else{
 
 
 document.documentElement.setAttribute("data-theme","dark");
 
 localStorage.setItem("theme","dark");
 
-button.textContent="🌓";
+
+}
+
+
+updateThemeButton();
 
 
 }
+
+
+
+
+
+function updateThemeButton(){
+
+
+const button =
+document.getElementById("themeButton");
+
+if(!button)
+return;
+
+
+
+if(
+document.documentElement.getAttribute("data-theme")
+==="dark"
+){
+
+button.textContent="🌓";
+
+}
+
+else{
+
+button.textContent="🌗";
+
+}
+
+
+}
+
+
+
+
+
+
+function goTrainer(){
+
+playSound("click");
+
+
+setTimeout(()=>{
+
+window.location.href="trainer.html";
+
+},150);
 
 
 }
@@ -513,24 +596,20 @@ button.textContent="🌓";
 window.onload=()=>{
 
 
-const button =
-document.getElementById("themeButton");
-
-
-
 if(localStorage.getItem("theme")==="dark"){
 
-
-document.documentElement.setAttribute("data-theme","dark");
-
-button.textContent="🌓";
-
+document.documentElement.setAttribute(
+"data-theme",
+"dark"
+);
 
 }
 
 
-};
+updateThemeButton();
 
+
+};
 
 
 </script>
