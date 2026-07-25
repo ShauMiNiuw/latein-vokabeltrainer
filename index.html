@@ -17,10 +17,7 @@
 
 <div class="container">
 
-<div class="screen active card">
-
-
-
+<div class="screen active card" id="login-screen">
 
 <!-- Account -->
 
@@ -36,10 +33,7 @@
 </div>
 
 
-
-
-
-<!-- Top Controls -->
+<!-- Audio + Theme -->
 
 <div class="top-controls">
 
@@ -63,12 +57,17 @@
 
 
 
-
-
 <h1 class="trainer-title">
+
 🏛️ Latein Vokabeltrainer 🏛️
+
 </h1>
 
+<p class="login-subtitle">
+
+Lerne Vokabeln smarter als je zuvor.
+
+</p>
 
 
 
@@ -76,31 +75,43 @@
 
 <!-- LOGIN -->
 
-<div
-    id="loginBox"
-    class="login-box">
+<div id="loginBox">
 
-    <input
-        id="loginEmail"
-        type="text"
-        placeholder="E-Mail oder Benutzername">
+<input
+    id="email"
+    type="text"
+    placeholder="📧 E-Mail oder Benutzername">
 
-    <input
-        id="loginPassword"
-        type="password"
-        placeholder="Passwort">
+<input
+    id="password"
+    type="password"
+    placeholder="🔒 Passwort">
 
-    <button
-        class="main-btn"
-        id="loginBtn">
-        Anmelden
-    </button>
+<label class="remember-label">
 
-    <button
-        class="text-btn"
-        onclick="showRegister()">
-        Noch keinen Account? – Registrieren
-    </button>
+<input
+    type="checkbox"
+    id="rememberMe">
+
+7 Tage angemeldet bleiben
+
+</label>
+
+<button
+    class="main-btn"
+    id="loginBtn">
+
+🚀 Anmelden
+
+</button>
+
+<button
+    class="secondary-btn"
+    onclick="showRegister()">
+
+📝 Noch keinen Account? Registrieren
+
+</button>
 
 </div>
 
@@ -109,39 +120,42 @@
 
 
 
-<!-- REGISTRIEREN -->
+<!-- REGISTRIERUNG -->
 
 <div
     id="registerBox"
-    class="login-box"
     style="display:none;">
 
-    <input
-        id="registerEmail"
-        type="email"
-        placeholder="E-Mail">
+<input
+    id="registerEmail"
+    type="email"
+    placeholder="📧 E-Mail">
 
-    <input
-        id="registerUsername"
-        type="text"
-        placeholder="Benutzername">
+<input
+    id="registerUsername"
+    type="text"
+    placeholder="👤 Benutzername">
 
-    <input
-        id="registerPassword"
-        type="password"
-        placeholder="Passwort">
+<input
+    id="registerPassword"
+    type="password"
+    placeholder="🔒 Passwort">
 
-    <button
-        class="main-btn"
-        id="registerBtn">
-        Registrieren
-    </button>
+<button
+    class="main-btn"
+    id="registerBtn">
 
-    <button
-        class="text-btn"
-        onclick="showLogin()">
-        Schon einen Account? – Anmelden
-    </button>
+📝 Registrieren
+
+</button>
+
+<button
+    class="secondary-btn"
+    onclick="showLogin()">
+
+🔑 Schon einen Account? Anmelden
+
+</button>
 
 </div>
 
@@ -155,25 +169,23 @@
 
 </div>
 
-
-
-
-
-<script type="module" src="auth.js"></script>
-
-
-
-
-
 <script>
+
+let soundEffectsEnabled = true;
+
+
+// =========================
+// Login / Registrierung
+// =========================
 
 function showRegister(){
 
     playSound("click");
 
-    document.getElementById("loginBox").style.display="none";
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("registerBox").style.display = "flex";
 
-    document.getElementById("registerBox").style.display="block";
+    document.getElementById("message").textContent = "";
 
 }
 
@@ -181,19 +193,32 @@ function showLogin(){
 
     playSound("click");
 
-    document.getElementById("registerBox").style.display="none";
+    document.getElementById("registerBox").style.display = "none";
+    document.getElementById("loginBox").style.display = "flex";
 
-    document.getElementById("loginBox").style.display="block";
+    document.getElementById("message").textContent = "";
 
 }
+
+
+
+// =========================
+// Account
+// =========================
 
 function openAccount(){
 
     playSound("click");
 
-    window.location.href="account.html";
+    window.location.href = "account.html";
 
 }
+
+
+
+// =========================
+// Dark / Light Mode
+// =========================
 
 function toggleTheme(){
 
@@ -219,7 +244,9 @@ function toggleTheme(){
 
 function updateThemeButton(){
 
-    const button=document.getElementById("themeButton");
+    const button = document.getElementById("themeButton");
+
+    if(!button) return;
 
     if(document.documentElement.getAttribute("data-theme")==="dark"){
 
@@ -235,11 +262,101 @@ function updateThemeButton(){
 
 }
 
+
+
+// =========================
+// Sound Menü
+// =========================
+
+function openSoundMenu(){
+
+    const menu = document.getElementById("sound-menu");
+
+    if(!menu) return;
+
+    menu.style.display =
+        menu.style.display==="block"
+        ? "none"
+        : "block";
+
+}
+
+function closeSoundMenu(){
+
+    const menu=document.getElementById("sound-menu");
+
+    if(menu){
+
+        menu.style.display="none";
+
+    }
+
+}
+
+
+
+// =========================
+// Sounds
+// =========================
+
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playSound(type){
+
+    if(!soundEffectsEnabled) return;
+
+    try{
+
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        if(type==="click"){
+
+            osc.type="sine";
+
+            osc.frequency.setValueAtTime(
+                800,
+                audioCtx.currentTime
+            );
+
+            gainNode.gain.setValueAtTime(
+                0.12,
+                audioCtx.currentTime
+            );
+
+            gainNode.gain.exponentialRampToValueAtTime(
+                0.01,
+                audioCtx.currentTime+0.08
+            );
+
+            osc.start();
+            osc.stop(audioCtx.currentTime+0.08);
+
+        }
+
+    }
+
+    catch(e){}
+
+}
+
+
+
+// =========================
+// Start
+// =========================
+
 window.onload=()=>{
 
     if(localStorage.getItem("theme")==="dark"){
 
-        document.documentElement.setAttribute("data-theme","dark");
+        document.documentElement.setAttribute(
+            "data-theme",
+            "dark"
+        );
 
     }
 
@@ -249,6 +366,266 @@ window.onload=()=>{
 
 </script>
 
-</body>
+<script type="module">
 
+import {
+    auth,
+    db,
+    doc,
+    setDoc,
+    getDoc,
+    collection,
+    getDocs,
+    query,
+    where
+} from "./firebase.js";
+
+import {
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    updateProfile
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+console.log("Firebase verbunden!");
+
+
+
+// =========================
+// Registrieren
+// =========================
+
+async function register(){
+
+    const email =
+        document.getElementById("registerEmail").value.trim();
+
+    const username =
+        document.getElementById("registerUsername").value.trim();
+
+    const password =
+        document.getElementById("registerPassword").value;
+
+
+    if(email==="" || username==="" || password===""){
+
+        message.textContent="Bitte fülle alle Felder aus.";
+        return;
+
+    }
+
+    try{
+
+        // Benutzername prüfen
+
+const usernameQuery = query(
+    collection(db,"users"),
+    where(
+        "usernameLower",
+        "==",
+        username.toLowerCase()
+    )
+);
+
+        const usernameSnapshot =
+            await getDocs(usernameQuery);
+
+        if(!usernameSnapshot.empty){
+
+            message.textContent =
+                "Dieser Benutzername ist bereits vergeben.";
+
+            return;
+
+        }
+
+
+        const userCredential =
+            await createUserWithEmailAndPassword(
+                auth,
+                email,
+                password
+            );
+
+await updateProfile(
+    userCredential.user,
+    {
+        displayName: username
+    }
+);
+
+
+await setDoc(
+
+    doc(
+        db,
+        "users",
+        userCredential.user.uid
+    ),
+
+    {
+
+        email: email,
+
+        username: username,
+
+        usernameLower: username.toLowerCase(),
+
+        role: "user",
+
+        approved: false,
+
+        createdAt:
+            new Date().toISOString()
+
+    }
+
+);
+
+
+        message.textContent =
+            "Registrierung erfolgreich. Bitte warte auf deine Freischaltung.";
+
+
+        showLogin();
+
+    }
+
+    catch(error){
+
+        message.textContent =
+            error.message;
+
+    }
+
+}
+
+
+
+// =========================
+// Login
+// =========================
+
+async function login(){
+
+    let login =
+        document.getElementById("loginEmail").value.trim();
+
+    const password =
+        document.getElementById("loginPassword").value;
+
+
+
+    try{
+
+        // Falls Benutzername eingegeben wurde
+        if(!login.includes("@")){
+
+            const usernameQuery = query(
+                collection(db,"users"),
+                where(
+    "usernameLower",
+    "==",
+    login.toLowerCase()
+)
+            );
+
+            const snapshot =
+                await getDocs(usernameQuery);
+
+            if(snapshot.empty){
+
+                throw new Error("Benutzer nicht gefunden.");
+
+            }
+
+            login =
+                snapshot.docs[0].data().email;
+
+        }
+
+
+        const userCredential =
+            await signInWithEmailAndPassword(
+
+                auth,
+                login,
+                password
+
+            );
+
+
+        const userDoc =
+            await getDoc(
+
+                doc(
+                    db,
+                    "users",
+                    userCredential.user.uid
+                )
+
+            );
+
+
+        if(!userDoc.exists()){
+
+            throw new Error(
+                "Benutzerdaten fehlen."
+            );
+
+        }
+
+
+        const userData =
+            userDoc.data();
+
+
+        if(userData.approved){
+
+            window.location.href="trainer.html";
+
+        }
+
+        else{
+
+            window.location.href="account.html";
+
+        }
+
+    }
+
+    catch(error){
+
+        message.textContent =
+            error.message;
+
+    }
+
+}
+
+
+
+// =========================
+// Buttons
+// =========================
+
+const message =
+    document.getElementById("message");
+
+document
+.getElementById("loginBtn")
+.addEventListener(
+    "click",
+    login
+);
+
+document
+.getElementById("registerBtn")
+.addEventListener(
+    "click",
+    register
+);
+
+</script>
+
+</body>
 </html>

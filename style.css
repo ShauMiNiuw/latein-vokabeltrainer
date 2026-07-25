@@ -736,6 +736,80 @@
 /*                                                                            */
 /* ========================================================================== */
 
+#login-screen{
+
+    max-width:520px;
+
+}
+
+#loginBox,
+#registerBox{
+
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+
+    margin-top:25px;
+
+}
+
+.login-subtitle{
+
+    text-align:center;
+
+    opacity:.8;
+
+    margin-top:-5px;
+    margin-bottom:25px;
+
+}
+
+.secondary-btn{
+
+    background:none;
+
+    border:none;
+
+    color:var(--primary);
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    transition:.2s;
+
+}
+
+.secondary-btn:hover{
+
+    transform:scale(1.03);
+
+}
+
+.remember-label{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    margin:5px 0;
+
+    font-size:15px;
+
+}
+
+#message{
+
+    text-align:center;
+
+    margin-top:20px;
+
+    min-height:22px;
+
+}
+
 /* ========================================================================== */
 /*                                                                            */
 /*                             👤 ACCOUNT.HTML 👤                            */

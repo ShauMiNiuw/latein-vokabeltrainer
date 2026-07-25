@@ -8,7 +8,10 @@ import {
     getDoc,
     updateDoc,
     collection,
-    getDocs
+    getDocs,
+    deleteDoc,
+    query,
+    where
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 // Firebase-Konfiguration
@@ -35,5 +38,8 @@ export {
     getDoc,
     updateDoc,
     collection,
-    getDocs
+    getDocs,
+    deleteDoc,
+    query,
+    where
 };
