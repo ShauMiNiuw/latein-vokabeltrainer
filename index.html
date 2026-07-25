@@ -8,15 +8,48 @@
 
     <title>Latein Vokabeltrainer</title>
 
-    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="icon.png" type="image/png">
 
 </head>
 
-
 <body>
 
+<div class="container">
 
-<div class="topbar">
+<div class="screen active card">
+
+
+
+
+<!-- Account -->
+
+<div class="account-control">
+
+    <button
+        class="icon-toggle-btn"
+        onclick="openAccount()"
+        title="Account">
+        👤
+    </button>
+
+</div>
+
+
+
+
+
+<!-- Top Controls -->
+
+<div class="top-controls">
+
+    <button
+        class="icon-toggle-btn"
+        id="btn-mute"
+        onclick="openSoundMenu()"
+        title="Audio">
+        🔊
+    </button>
 
     <button
         id="themeButton"
@@ -30,44 +63,99 @@
 
 
 
-<div class="login-container">
 
 
-    <h1>Latein Vokabeltrainer</h1>
+<h1 class="trainer-title">
+🏛️ Latein Vokabeltrainer 🏛️
+</h1>
 
 
-    <div class="login-box">
 
 
-        <input
-            id="email"
-            type="email"
-            placeholder="E-Mail">
 
 
-        <input
-            id="password"
-            type="password"
-            placeholder="Passwort">
+<!-- LOGIN -->
 
+<div
+    id="loginBox"
+    class="login-box">
 
-        <button id="loginBtn">
-            Anmelden
-        </button>
+    <input
+        id="loginEmail"
+        type="text"
+        placeholder="E-Mail oder Benutzername">
 
+    <input
+        id="loginPassword"
+        type="password"
+        placeholder="Passwort">
 
-        <button id="registerBtn">
-            Registrieren
-        </button>
+    <button
+        class="main-btn"
+        id="loginBtn">
+        Anmelden
+    </button>
 
-
-        <p id="message"></p>
-
-
-    </div>
-
+    <button
+        class="text-btn"
+        onclick="showRegister()">
+        Noch keinen Account? – Registrieren
+    </button>
 
 </div>
+
+
+
+
+
+
+<!-- REGISTRIEREN -->
+
+<div
+    id="registerBox"
+    class="login-box"
+    style="display:none;">
+
+    <input
+        id="registerEmail"
+        type="email"
+        placeholder="E-Mail">
+
+    <input
+        id="registerUsername"
+        type="text"
+        placeholder="Benutzername">
+
+    <input
+        id="registerPassword"
+        type="password"
+        placeholder="Passwort">
+
+    <button
+        class="main-btn"
+        id="registerBtn">
+        Registrieren
+    </button>
+
+    <button
+        class="text-btn"
+        onclick="showLogin()">
+        Schon einen Account? – Anmelden
+    </button>
+
+</div>
+
+
+
+
+
+<p id="message"></p>
+
+</div>
+
+</div>
+
+
 
 
 
@@ -75,86 +163,91 @@
 
 
 
+
+
 <script>
 
+function showRegister(){
 
-function toggleTheme() {
+    playSound("click");
 
+    document.getElementById("loginBox").style.display="none";
 
-    const button = document.getElementById("themeButton");
+    document.getElementById("registerBox").style.display="block";
 
+}
 
-    if(document.documentElement.getAttribute("data-theme") === "dark") {
+function showLogin(){
 
+    playSound("click");
+
+    document.getElementById("registerBox").style.display="none";
+
+    document.getElementById("loginBox").style.display="block";
+
+}
+
+function openAccount(){
+
+    playSound("click");
+
+    window.location.href="account.html";
+
+}
+
+function toggleTheme(){
+
+    if(document.documentElement.getAttribute("data-theme")==="dark"){
 
         document.documentElement.removeAttribute("data-theme");
 
-        localStorage.setItem(
-            "theme",
-            "light"
-        );
+        localStorage.setItem("theme","light");
 
+    }
 
-        button.textContent = "🌗";
+    else{
 
+        document.documentElement.setAttribute("data-theme","dark");
 
-    } else {
+        localStorage.setItem("theme","dark");
 
+    }
 
-        document.documentElement.setAttribute(
-            "data-theme",
-            "dark"
-        );
+    updateThemeButton();
 
+}
 
-        localStorage.setItem(
-            "theme",
-            "dark"
-        );
+function updateThemeButton(){
 
+    const button=document.getElementById("themeButton");
 
-        button.textContent = "🌓";
+    if(document.documentElement.getAttribute("data-theme")==="dark"){
 
+        button.textContent="🌓";
+
+    }
+
+    else{
+
+        button.textContent="🌗";
 
     }
 
 }
 
+window.onload=()=>{
 
+    if(localStorage.getItem("theme")==="dark"){
 
-window.onload = function(){
-
-
-    const button =
-    document.getElementById("themeButton");
-
-
-    if(localStorage.getItem("theme") === "dark"){
-
-
-        document.documentElement.setAttribute(
-            "data-theme",
-            "dark"
-        );
-
-
-        button.textContent="🌓";
-
-
-    } else {
-
-
-        button.textContent="🌗";
-
+        document.documentElement.setAttribute("data-theme","dark");
 
     }
 
+    updateThemeButton();
 
 };
 
-
 </script>
-
 
 </body>
 
