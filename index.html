@@ -8,6 +8,12 @@
 
     <title>Latein Vokabeltrainer</title>
 
+<script>
+if(localStorage.getItem("theme")==="dark"){
+    document.documentElement.setAttribute("data-theme","dark");
+}
+</script>
+
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="icon.png" type="image/png">
 
@@ -202,167 +208,6 @@ function showLogin(){
 
 
 
-// =========================
-// Account
-// =========================
-
-function openAccount(){
-
-    playSound("click");
-
-    window.location.href = "account.html";
-
-}
-
-
-
-// =========================
-// Dark / Light Mode
-// =========================
-
-function toggleTheme(){
-
-    if(document.documentElement.getAttribute("data-theme")==="dark"){
-
-        document.documentElement.removeAttribute("data-theme");
-
-        localStorage.setItem("theme","light");
-
-    }
-
-    else{
-
-        document.documentElement.setAttribute("data-theme","dark");
-
-        localStorage.setItem("theme","dark");
-
-    }
-
-    updateThemeButton();
-
-}
-
-function updateThemeButton(){
-
-    const button = document.getElementById("themeButton");
-
-    if(!button) return;
-
-    if(document.documentElement.getAttribute("data-theme")==="dark"){
-
-        button.textContent="🌓";
-
-    }
-
-    else{
-
-        button.textContent="🌗";
-
-    }
-
-}
-
-
-
-// =========================
-// Sound Menü
-// =========================
-
-function openSoundMenu(){
-
-    const menu = document.getElementById("sound-menu");
-
-    if(!menu) return;
-
-    menu.style.display =
-        menu.style.display==="block"
-        ? "none"
-        : "block";
-
-}
-
-function closeSoundMenu(){
-
-    const menu=document.getElementById("sound-menu");
-
-    if(menu){
-
-        menu.style.display="none";
-
-    }
-
-}
-
-
-
-// =========================
-// Sounds
-// =========================
-
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-function playSound(type){
-
-    if(!soundEffectsEnabled) return;
-
-    try{
-
-        const osc = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-
-        osc.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-
-        if(type==="click"){
-
-            osc.type="sine";
-
-            osc.frequency.setValueAtTime(
-                800,
-                audioCtx.currentTime
-            );
-
-            gainNode.gain.setValueAtTime(
-                0.12,
-                audioCtx.currentTime
-            );
-
-            gainNode.gain.exponentialRampToValueAtTime(
-                0.01,
-                audioCtx.currentTime+0.08
-            );
-
-            osc.start();
-            osc.stop(audioCtx.currentTime+0.08);
-
-        }
-
-    }
-
-    catch(e){}
-
-}
-
-
-
-// =========================
-// Start
-// =========================
-
-window.onload=()=>{
-
-    if(localStorage.getItem("theme")==="dark"){
-
-        document.documentElement.setAttribute(
-            "data-theme",
-            "dark"
-        );
-
-    }
-
-    updateThemeButton();
-
-};
 
 </script>
 
@@ -628,6 +473,8 @@ document
 );
 
 </script>
+
+<script src="common.js"></script>
 
 </body>
 </html>

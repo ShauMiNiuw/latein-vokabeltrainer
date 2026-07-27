@@ -8,6 +8,13 @@
     <title>Adminpanel</title>
 
     <link rel="icon" type="image/png" href="icon.png">
+
+<script>
+if(localStorage.getItem("theme")==="dark"){
+    document.documentElement.setAttribute("data-theme","dark");
+}
+</script>
+
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -21,6 +28,8 @@
     <script type="module" src="auth.js"></script>
 
 <script type="module" src="page-auth.js"></script>
+
+<script src="common.js"></script>
 
 </body>
 </html>
