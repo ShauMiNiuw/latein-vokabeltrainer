@@ -812,6 +812,19 @@ input[type="password"] {
 
 }
 
+#sound-menu{
+    position:absolute;
+    top:70px;
+    left:50%;
+    transform:translateX(-50%);
+}
+
+.icon-toggle-btn:disabled{
+    opacity:.4;
+    cursor:not-allowed;
+}
+
+
 /* ========================================================================== */
 /*                                                                            */
 /*                             👤 ACCOUNT.HTML 👤                            */

@@ -693,7 +693,13 @@ document.addEventListener("click",(e)=>{
 
 function createCommonUI(){
 
-    const card=document.querySelector(".card");
+    const card = document.querySelector(".card");
+
+card.insertAdjacentHTML("beforeend", `
+<div id="sound-menu">
+...
+</div>
+`);
 
     if(!card) return;
 
